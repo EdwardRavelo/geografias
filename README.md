@@ -1,12 +1,12 @@
 # Geografías
 
-Módulos de capacitación sobre la geografía de cada país: mapa interactivo, regiones, provincias o equivalentes, lecciones, práctica y evaluación.
+Módulos de consulta y capacitación sobre la geografía de cada país: mapa interactivo, divisiones administrativas, ciudades con referencias y lecciones.
 
 Cada país vive en su propia carpeta y es independiente (se abre con su `index.html`).
 
 | País | Carpeta | Estado |
 |---|---|---|
-| Ecuador | `Ecuador/` | Completo: 6 lecciones, 3 juegos, evaluación de 20 preguntas |
+| Ecuador | `Ecuador/` | Atlas con 223 cantones, ciudades y referencias, 7 lecciones |
 
 ## Cómo añadir un país
 

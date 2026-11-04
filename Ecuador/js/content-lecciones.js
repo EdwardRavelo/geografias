@@ -1,4 +1,4 @@
-/* Contenido: lecciones (texto + escena de mapa por paso) y preguntas de comprobación.
+/* Contenido: lecciones (texto + escena de mapa por paso).
    Cada paso: { kicker, title, body (HTML), aside?, scene }.
    scene: { focus, hl, layers, aux } — ver AtlasMap.setScene en ec-map.js */
 (function () {
@@ -10,7 +10,7 @@
   const P = (name) => name;
   const RV = (id, label) => label;
 
-  EC.SCENE_DEFAULT = { focus: 'all', hl: null, tint: 0.5, relief: true, regions: true, places: false, equator: false, labels: 'provinces', aux: null };
+  EC.SCENE_DEFAULT = { focus: 'all', hl: null, cantones: false, tint: 0.5, relief: true, regions: true, places: false, equator: false, labels: 'provinces', aux: null };
 
   EC.LESSONS = [
     // ───────────────────────────── 1 ─────────────────────────────
@@ -53,11 +53,6 @@
                  <p>Ecuador no cambia la hora en verano: al estar sobre el ecuador, el día dura casi 12 horas todo el año, con el sol saliendo hacia las 6:00 y poniéndose hacia las 18:00.</p>`,
           scene: { focus: 'gal', hl: ['galapagos'], layers: { tint: 0.35, labels: 'provinces' } },
         },
-      ],
-      check: [
-        { t: 'mcq', q: '¿Qué significa el nombre «Ecuador»?', o: ['La línea que divide la Tierra en dos hemisferios', 'El nombre indígena de la cordillera', 'La capital de la antigua colonia', 'El río más largo del país'], a: 0, why: 'El nombre viene de la línea ecuatorial (latitud 0°), que cruza el país al norte de Quito.' },
-        { t: 'mcq', q: '¿Cuál de estas provincias es atravesada por la línea equinoccial?', o: ['Pichincha', 'Loja', 'Azuay', 'El Oro'], a: 0, why: 'La línea cruza Pichincha (además de Manabí, Santo Domingo, Napo y Sucumbíos).' },
-        { t: 'mcq', q: 'A qué distancia aproximada de la costa continental están las Galápagos?', o: ['100 km', '500 km', '1 000 km', '3 000 km'], a: 2, why: 'El archipiélago está a unos 1 000 km del continente, y por eso su huso horario es UTC−6.' },
       ],
     },
 
@@ -113,11 +108,6 @@
           scene: { focus: 'all', hl: null, aux: { chart: 'regiones' }, layers: { tint: 0.62, labels: 'regions' } },
         },
       ],
-      check: [
-        { t: 'mcq', q: '¿Cuántas provincias tiene la región Sierra?', o: ['6', '7', '10', '12'], a: 2, why: 'La Sierra tiene 10 provincias: de Carchi a Loja, pasando por Azuay y Cañar.' },
-        { t: 'mcq', q: '¿Qué región ocupa más territorio?', o: ['Costa', 'Sierra', 'Amazonía', 'Insular'], a: 2, why: 'La Amazonía abarca casi la mitad del territorio (≈ 46 %), con muy poca población.' },
-        { t: 'tf', q: 'Loja pertenece a la región Costa.', a: false, why: 'Loja está en la Sierra, en el extremo sur de los Andes, frontera con Perú.' },
-      ],
     },
 
     // ───────────────────────────── 3 ─────────────────────────────
@@ -167,11 +157,6 @@
           scene: { focus: 'all', hl: null, layers: { tint: 0.1, labels: false, regions: false, } },
         },
       ],
-      check: [
-        { t: 'mcq', q: '¿Cuál es la montaña más alta del Ecuador?', o: ['Cotopaxi', 'Chimborazo', 'Cayambe', 'Antisana'], a: 1, why: 'El Chimborazo, con 6 263 m, es la cumbre más alta del país.' },
-        { t: 'mcq', q: 'Humboldt llamó «avenida de los volcanes» a…', o: ['La costa del Pacífico', 'El callejón interandino', 'La llanura amazónica', 'El archipiélago de Galápagos'], a: 1, why: 'El callejón interandino es el corredor entre las cordilleras Occidental y Real, flanqueado por volcanes.' },
-        { t: 'mcq', q: '¿Qué placa tectónica se hunde bajo Sudamérica frente a Ecuador?', o: ['Caribe', 'Cocos', 'Nazca', 'Antártica'], a: 2, why: 'La placa de Nazca se subduce bajo la Sudamericana y es el motor de volcanes y sismos.' },
-      ],
     },
 
     // ───────────────────────────── 4 ─────────────────────────────
@@ -213,11 +198,6 @@
           body: `<p>El relieve vuelve a Ecuador un país hidroeléctrico: la mayor parte de su electricidad proviene de centrales como Paute–Molino (río Paute), Coca Codo Sinclair (río Coca) y Mazar. En la Costa, las represas Daule-Peripa y Poza Honda regulan inundaciones y abastecen riego y agua potable.</p>`,
           scene: { focus: 'main', hl: ['azuay', 'napo', 'orellana', 'sucumbios', 'morona-santiago', 'guayas'], layers: { tint: 0.5, labels: 'provinces' } },
         },
-      ],
-      check: [
-        { t: 'mcq', q: 'El río Guayas se forma por la unión de…', o: ['Napo y Aguarico', 'Daule y Babahoyo', 'Esmeraldas y Mira', 'Paute y Zamora'], a: 1, why: 'Los ríos Daule y Babahoyo se juntan frente a Guayaquil y forman el Guayas.' },
-        { t: 'mcq', q: '¿A qué vertiente pertenece el río Napo?', o: ['Pacífico', 'Amazonas', 'Caribe', 'Ninguna: es un río interior'], a: 1, why: 'El Napo, como el Pastaza, el Santiago y el Aguarico, drena a la cuenca del Amazonas.' },
-        { t: 'tf', q: 'El río Paute desemboca directamente en el océano Pacífico.', a: false, why: 'El Paute pasa a la Amazonía, se une al Santiago y llega al Marañón y al Amazonas.' },
       ],
     },
 
@@ -269,11 +249,6 @@
           scene: { focus: { box: [-81.6, -4.0, -78.6, 1.6] }, hl: ids('costa'), layers: { tint: 0.5, labels: 'provinces' } },
         },
       ],
-      check: [
-        { t: 'mcq', q: '¿Qué factor influye más en la temperatura dentro de Ecuador?', o: ['La latitud', 'La altitud', 'La longitud', 'La cercanía a una capital'], a: 1, why: 'Como todo el país está cerca del ecuador, la altitud explica casi todo: ≈ 0,6 °C menos cada 100 m.' },
-        { t: 'mcq', q: 'La corriente fría que reseca el sur de la Costa se llama…', o: ['de Humboldt', 'de El Niño', 'del Golfo', 'de Cromwell'], a: 0, why: 'La corriente de Humboldt enfría el agua y reduce la lluvia en la costa sur, como en Santa Elena.' },
-        { t: 'mcq', q: 'Un lugar a 4 000 m de altitud pertenece al piso…', o: ['Cálido', 'Templado', 'Páramo', 'Subtropical'], a: 2, why: 'Entre 3 600 y 4 700 m está el páramo: frío, con pajonal, lagunas y frailejones.' },
-      ],
     },
 
     // ───────────────────────────── 6 ─────────────────────────────
@@ -310,50 +285,59 @@
           scene: { focus: 'main', hl: [...ids('costa').filter((i) => ['guayas', 'los-rios', 'manabi'].includes(i))], layers: { tint: 0.4, labels: 'provinces' } },
         },
       ],
-      check: [
-        { t: 'tf', q: 'Ecuador figura entre los países megadiversos del mundo.', a: true, why: 'Pese a su tamaño, es uno de los 17 países megadiversos, por la variedad de pisos climáticos.' },
-        { t: 'mcq', q: '¿En qué año fueron declaradas las Galápagos Patrimonio Natural de la Humanidad?', o: ['1959', '1978', '1998', '2008'], a: 1, why: 'En 1978, y fueron de los primeros bienes inscritos por la UNESCO. El Parque Nacional es de 1959.' },
-        { t: 'mcq', q: 'El terremoto de abril de 2016 afectó principalmente a…', o: ['Loja y Zamora', 'Manabí y Esmeraldas', 'Guayas y El Oro', 'Napo y Orellana'], a: 1, why: 'El epicentro estuvo cerca de Pedernales: Manabí y Esmeraldas sufrieron los mayores daños.' },
+    },
+
+    // ───────────────────────────── 7 ─────────────────────────────
+    {
+      id: 'direcciones', n: 7, title: 'Ubicar una dirección dictada', minutes: 12,
+      blurb: 'Cantón, cabecera, nombres que se repiten y cómo confirmar un lugar por teléfono antes de enviar ayuda.',
+      steps: [
+        {
+          kicker: 'Primero el cantón', title: 'Ciudad, cantón y cabecera: no siempre coinciden',
+          body: `<p>Cuando alguien dice «estoy en Lago Agrio», está nombrando una ciudad. El <strong>cantón</strong> es la división administrativa a la que pertenece, y la <strong>cabecera cantonal</strong> es la ciudad donde está su municipio. En 54 de los 223 cantones del país, la cabecera tiene un nombre distinto al del cantón.</p>
+                 <p>Ejemplos: el cantón Lago Agrio tiene su cabecera en <strong>Nueva Loja</strong>; Francisco de Orellana, en <strong>El Coca</strong>; Quinindé, en <strong>Rosa Zárate</strong>; Durán, en <strong>Eloy Alfaro</strong>. Para consultar los 223 casos, use la <a href="#/cantones">tabla de cantones</a>.</p>`,
+          aside: ['Para recordar', 'Pregunte siempre por la ciudad y también por el cantón o la parroquia. Si el cliente nombra una cabecera con otro nombre, búsquela en la tabla.'],
+          scene: { focus: { provinces: ['sucumbios', 'orellana'] }, hl: ['sucumbios', 'orellana'], layers: { cantones: true, tint: 0.5, labels: 'provinces', places: ['Coca', 'Nueva Loja'] } },
+        },
+        {
+          kicker: 'Homónimos', title: 'Nombres que se repiten',
+          body: `<p>Varios nombres aparecen en más de un lugar. Dos cantones se llaman <strong>Bolívar</strong> (en ${T('carchi')} y en ${T('manabi')}) y dos, <strong>Olmedo</strong> (en ${T('manabi')} y en ${T('loja')}).</p>
+                 <p>Algunos nombres se confunden entre cantón y cabecera: <strong>Sucre</strong> es un cantón de Manabí (cabecera Bahía de Caráquez) y también la cabecera del cantón Veinticuatro de Mayo; <strong>San Miguel</strong> es un cantón de Bolívar y la cabecera del cantón Salcedo; <strong>Eloy Alfaro</strong> es un cantón de Esmeraldas y la cabecera de Durán.</p>
+                 <p>Por eso la provincia es siempre el primer dato que se confirma.</p>`,
+          scene: { focus: 'all', hl: ['carchi', 'manabi', 'loja'], layers: { tint: 0.55, labels: 'provinces' } },
+        },
+        {
+          kicker: 'El orden', title: 'De lo general a lo particular',
+          body: `<p>Una dirección se confirma en este orden: <strong>provincia → cantón → ciudad o parroquia → vía principal → intersección o numeración → referencia visible</strong>. Cada dato descarta ubicaciones que no corresponden.</p>
+                 <p>Ejemplo en la costa: ${T('guayas')} contiene los cantones Guayaquil, Durán y Samborondón. Los tres forman una sola mancha urbana, pero cada uno tiene su municipio y sus calles; una grúa que sale de Guayaquil hacia Durán debe cruzar un puente.</p>`,
+          scene: { focus: { box: [-80.12, -2.4, -79.68, -1.95] }, hl: ['guayas'], layers: { cantones: true, tint: 0.4, labels: false, places: ['Guayaquil'] } },
+        },
+        {
+          kicker: 'Carreteras', title: 'Vías rurales: kilómetro y sentido',
+          body: `<p>Fuera de la ciudad, la ubicación se da por <strong>vía y kilómetro</strong>: «Vía a la Costa, kilómetro 14» o «Panamericana Norte, kilómetro 20». El kilómetro se cuenta desde el punto de origen de esa vía; conviene confirmar <strong>desde dónde</strong> y en <strong>qué sentido</strong> viaja el cliente.</p>
+                 <p>Pida un punto visible cercano: peaje, gasolinera, puente, redondel o poblado. Dos referencias independientes valen más que un solo número.</p>`,
+          scene: { focus: 'all', hl: null, layers: { tint: 0.5, labels: 'provinces', places: 'capitals' } },
+        },
+        {
+          kicker: 'Protocolo', title: 'Confirmar en voz alta',
+          body: `<ol class="steps-list">
+                   <li>Repita el dato tal como lo entendió y pida corrección.</li>
+                   <li>Pida deletrear los nombres poco comunes.</li>
+                   <li>Confirme provincia y cantón antes de las calles.</li>
+                   <li>Pida una referencia que se vea desde el vehículo.</li>
+                   <li>Si puede, pida que comparta la ubicación y compárela con lo dictado.</li>
+                   <li>Si no coinciden, no envíe ayuda: aclare primero.</li>
+                 </ol>`,
+          scene: { focus: 'all', hl: null, layers: { tint: 0.5, labels: 'regions' } },
+        },
+        {
+          kicker: 'Límites', title: 'Qué no hace este módulo',
+          body: `<p>Este módulo da contexto: ubica provincias, cantones, ciudades y referencias, y enseña a interpretar lo que se dicta. <strong>No sustituye</strong> el mapa de despacho ni la ubicación en vivo del cliente.</p>
+                 <p>Los límites son referenciales y las referencias proceden de OpenStreetMap, que puede estar incompleto. Tampoco guarda direcciones de personas: no registre datos de clientes en este material.</p>`,
+          scene: { focus: 'all', hl: null, layers: { tint: 0.5, labels: 'provinces' } },
+        },
       ],
     },
   ];
 
-  // ───────── Banco adicional de preguntas (para práctica y evaluación) ─────────
-  EC.BANK = [
-    { t: 'mcq', tag: 'regiones', q: '¿En qué se divide una provincia?', o: ['En cantones', 'En regiones', 'En zonas', 'En departamentos'], a: 0, why: 'La provincia se divide en cantones, y cada cantón en parroquias urbanas y rurales.' },
-    { t: 'tf', tag: 'regiones', q: 'La Sierra es un cantón de Ecuador.', a: false, why: 'La Sierra es una región natural. El cantón es una división administrativa dentro de una provincia.' },
-    { t: 'mcq', tag: 'posicion', q: '¿Con qué países limita Ecuador por tierra?', o: ['Colombia y Perú', 'Colombia y Brasil', 'Perú y Brasil', 'Venezuela y Perú'], a: 0, why: 'Al norte con Colombia y al sur y este con Perú; al oeste, el Pacífico.' },
-    { t: 'mcq', tag: 'posicion', q: 'Galápagos tiene un huso horario…', o: ['Igual al continental', 'Una hora menos que el continente', 'Una hora más que el continente', 'Dos horas menos'], a: 1, why: 'El continente usa UTC−5 y Galápagos UTC−6.' },
-    { t: 'tf', tag: 'posicion', q: 'Quito se encuentra en el hemisferio norte.', a: false, why: 'Quito está a 0° 11′ S: apenas al sur de la línea ecuatorial.' },
-    { t: 'mcq', tag: 'posicion', q: '¿Cuántas provincias tiene el país?', o: ['22', '23', '24', '25'], a: 2, why: 'Son 24 provincias; las dos más recientes (Santa Elena y Santo Domingo de los Tsáchilas) se crearon en 2007.' },
-    { t: 'mcq', tag: 'regiones', q: '¿Cuál es la capital de la provincia de Imbabura?', o: ['Otavalo', 'Ibarra', 'Cotacachi', 'Tulcán'], a: 1, why: 'Ibarra, la «ciudad blanca», es la capital de Imbabura.' },
-    { t: 'mcq', tag: 'regiones', q: '¿A qué región pertenece Zamora Chinchipe?', o: ['Costa', 'Sierra', 'Amazonía', 'Insular'], a: 2, why: 'Zamora Chinchipe está en la Amazonía sur, frontera con Perú.' },
-    { t: 'mcq', tag: 'regiones', q: '¿Cuál es la provincia más poblada?', o: ['Pichincha', 'Guayas', 'Manabí', 'Azuay'], a: 1, why: 'Guayas, con 4,39 millones, es la más poblada; Pichincha es la segunda.' },
-    { t: 'mcq', tag: 'regiones', q: '¿Cuál es la provincia de mayor superficie?', o: ['Pastaza', 'Morona Santiago', 'Manabí', 'Orellana'], a: 0, why: 'Pastaza (29 641 km²) es la mayor; la sigue Morona Santiago.' },
-    { t: 'mcq', tag: 'regiones', q: '¿Cuál es la provincia más pequeña por superficie?', o: ['Carchi', 'Santa Elena', 'Tungurahua', 'Cañar'], a: 2, why: 'Tungurahua tiene 3 386 km², la menor del país.' },
-    { t: 'tf', tag: 'regiones', q: 'La Amazonía tiene más habitantes que la Sierra.', a: false, why: 'La Sierra concentra ≈ 41 % de la población; la Amazonía apenas ≈ 5 %.' },
-    { t: 'mcq', tag: 'regiones', q: '¿Cuál es la capital de la provincia de Los Ríos?', o: ['Quevedo', 'Vinces', 'Babahoyo', 'Ventanas'], a: 2, why: 'Babahoyo es la capital; Quevedo es una ciudad más grande, pero no es la capital provincial.' },
-    { t: 'mcq', tag: 'relieve', q: '¿Cómo se llaman las cuencas del callejón interandino?', o: ['Hoyas', 'Llanos', 'Mesetas', 'Cañadas'], a: 0, why: 'Las hoyas (Quito, Ambato, Riobamba, Cuenca, Loja…) están separadas por nudos montañosos.' },
-    { t: 'mcq', tag: 'relieve', q: '¿Qué volcán es el más alto de los que siguen activos?', o: ['Cotopaxi (5 897 m)', 'Pichincha (4 784 m)', 'Sumaco (3 732 m)', 'Reventador (3 562 m)'], a: 0, why: 'El Cotopaxi supera los 5 800 m y es uno de los volcanes activos más altos del mundo.' },
-    { t: 'mcq', tag: 'relieve', q: '¿Qué es el golfo de Guayaquil?', o: ['El mayor estuario del Pacífico sudamericano', 'Un lago interandino', 'Una isla del archipiélago', 'La desembocadura del Esmeraldas'], a: 0, why: 'Es el mayor estuario de la costa pacífica de Sudamérica y recibe al río Guayas.' },
-    { t: 'tf', tag: 'relieve', q: 'La cima del Chimborazo es el punto de la superficie terrestre más alejado del centro de la Tierra.', a: true, why: 'Por el abultamiento ecuatorial, supera incluso al Everest en distancia al centro del planeta.' },
-    { t: 'mcq', tag: 'relieve', q: 'La cordillera costera de Chongón-Colonche se ubica en…', o: ['Guayas, Santa Elena y Manabí', 'Esmeraldas y Carchi', 'Loja y El Oro', 'Napo y Pastaza'], a: 0, why: 'Chongón-Colonche corre paralela al litoral entre Guayas, Santa Elena y Manabí.' },
-    { t: 'mcq', tag: 'agua', q: '¿Qué ciudad queda junto al río Guayas?', o: ['Guayaquil', 'Cuenca', 'Esmeraldas', 'Tena'], a: 0, why: 'Guayaquil se levanta en la margen derecha del Guayas.' },
-    { t: 'mcq', tag: 'agua', q: 'El río Pastaza atraviesa la cordillera Real por…', o: ['Agoyán, cerca de Baños', 'Cuenca', 'Quito', 'Loja'], a: 0, why: 'En Agoyán el Pastaza abre un cañón hacia la Amazonía.' },
-    { t: 'mcq', tag: 'agua', q: 'El río Esmeraldas se forma por la unión de…', o: ['Guayllabamba y Blanco', 'Napo y Coca', 'Santiago y Zamora', 'Chone y Portoviejo'], a: 0, why: 'El Guayllabamba y el Blanco forman el Esmeraldas, que desemboca en el Pacífico.' },
-    { t: 'tf', tag: 'agua', q: 'El río Putumayo forma parte de la frontera con Colombia.', a: true, why: 'El Putumayo y el San Miguel marcan el límite en Sucumbíos.' },
-    { t: 'mcq', tag: 'clima', q: 'Aproximadamente, ¿cuánto baja la temperatura al subir 100 m?', o: ['0,1 °C', '0,6 °C', '2 °C', '5 °C'], a: 1, why: 'En los Andes tropicales la temperatura baja cerca de 0,6 °C por cada 100 m.' },
-    { t: 'mcq', tag: 'clima', q: 'En la Costa, ¿cuándo cae la mayor parte de la lluvia («invierno»)?', o: ['De diciembre a mayo', 'De junio a noviembre', 'Solo en julio', 'Durante todo el año por igual'], a: 0, why: 'El invierno costeño es la época lluviosa, de diciembre a mayo.' },
-    { t: 'tf', tag: 'clima', q: 'En la Amazonía hay una época seca marcada.', a: false, why: 'Llueve casi todo el año, con más de 3 000 mm anuales en buena parte de la región.' },
-    { t: 'mcq', tag: 'naturaleza', q: '¿Dónde está el Parque Nacional Yasuní?', o: ['Amazonía (Orellana y Pastaza)', 'Costa (Manabí)', 'Sierra (Azuay)', 'Insular'], a: 0, why: 'El Yasuní está en la Amazonía, entre Orellana y Pastaza; es Reserva de Biosfera desde 1989.' },
-    { t: 'mcq', tag: 'naturaleza', q: 'El Parque Nacional Cajas, famoso por sus lagunas, está en…', o: ['Azuay', 'Napo', 'Esmeraldas', 'Carchi'], a: 0, why: 'El Cajas queda en Azuay, al occidente de Cuenca.' },
-    { t: 'tf', tag: 'naturaleza', q: 'Las islas más jóvenes de Galápagos están en el oeste del archipiélago.', a: true, why: 'Isabela y Fernandina, al oeste, son las más jóvenes y con mayor actividad volcánica.' },
-    // preguntas de mapa
-    { t: 'map', tag: 'regiones', q: 'Haz clic en la provincia de Los Ríos.', a: 'los-rios', why: 'Los Ríos es una provincia costera sin litoral, al norte del Guayas.' },
-    { t: 'map', tag: 'regiones', q: 'Haz clic en Chimborazo.', a: 'chimborazo', why: 'Chimborazo ocupa la Sierra central y da nombre al volcán más alto del país.' },
-    { t: 'map', tag: 'regiones', q: 'Haz clic en Galápagos.', a: 'galapagos', why: 'El archipiélago aparece en un recuadro a escala reducida.' },
-    { t: 'map', tag: 'posicion', q: 'Haz clic en la provincia de Carchi, en la frontera con Colombia.', a: 'carchi', why: 'Carchi es la provincia más septentrional de la Sierra.' },
-    { t: 'map', tag: 'regiones', q: 'Haz clic en Pastaza, la provincia más extensa.', a: 'pastaza', why: 'Pastaza tiene 29 641 km².' },
-    { t: 'map', tag: 'regiones', q: 'Haz clic en Santa Elena, la península más occidental.', a: 'santa-elena', why: 'Santa Elena es una provincia creada en 2007 y de clima semiárido.' },
-  ];
 })();

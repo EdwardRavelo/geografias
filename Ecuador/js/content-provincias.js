@@ -1,7 +1,7 @@
 /* Contenido: regiones y provincias.
    Cifras de superficie, población (Censo 2022, INEC), densidad y cantones: tabla de provincias de Ecuador
-   (Wikipedia, a partir de INEC). Se corrigió el número de cantones de Esmeraldas (7) y Morona Santiago (12)
-   para que el total sea 221. Alturas de las capitales: valores aproximados. */
+   (Wikipedia, a partir de INEC). Cantones vigentes: 223 en total (Esmeraldas 8 y Morona Santiago 13).
+   Alturas de las capitales: valores aproximados. */
 (function () {
   const EC = (window.EC = window.EC || {});
 
@@ -21,14 +21,14 @@
     ['chimborazo', 'sierra', 'Riobamba', 2754, 6500, 471933, 72.61, 10, ['Chimborazo']],
     ['cotopaxi', 'sierra', 'Latacunga', 2750, 6108, 470210, 76.98, 7, ['Cotopaxi']],
     ['el-oro', 'costa', 'Machala', 6, 5767, 714592, 123.92, 14, ['El Oro']],
-    ['esmeraldas', 'costa', 'Esmeraldas', 6, 15809, 553900, 35.04, 7, ['Esmeraldas']],
+    ['esmeraldas', 'costa', 'Esmeraldas', 6, 15809, 553900, 35.04, 8, ['Esmeraldas']],
     ['galapagos', 'insular', 'Puerto Baquerizo Moreno', 6, 8010, 28583, 3.57, 3, ['Galápagos']],
     ['guayas', 'costa', 'Guayaquil', 4, 15515, 4391923, 283.07, 25, ['Guayas']],
     ['imbabura', 'sierra', 'Ibarra', 2225, 4712, 469879, 99.71, 6, ['Imbabura']],
     ['loja', 'sierra', 'Loja', 2060, 11063, 485421, 43.88, 16, ['Loja']],
     ['los-rios', 'costa', 'Babahoyo', 8, 7205, 898652, 124.72, 13, ['Los Ríos']],
     ['manabi', 'costa', 'Portoviejo', 53, 19516, 1592840, 81.99, 22, ['Manabí']],
-    ['morona-santiago', 'amazonia', 'Macas', 1020, 25690, 192508, 8.0, 12, ['Morona', 'Santiago']],
+    ['morona-santiago', 'amazonia', 'Macas', 1020, 25690, 192508, 8.0, 13, ['Morona', 'Santiago']],
     ['napo', 'amazonia', 'Tena', 510, 12543, 131672, 10.5, 5, ['Napo']],
     ['orellana', 'amazonia', 'Francisco de Orellana (Coca)', 250, 21692, 182166, 8.4, 4, ['Orellana']],
     ['pastaza', 'amazonia', 'Puyo', 960, 29641, 111915, 3.78, 4, ['Pastaza']],

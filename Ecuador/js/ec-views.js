@@ -11,10 +11,7 @@
 
   /* ═════════════ Portada ═════════════ */
   V.home = function (root, app) {
-    const st = app.state;
     const lessons = EC.LESSONS;
-    const done = lessons.filter((l) => st.lessons[l.id] && st.lessons[l.id].done).length;
-    const next = lessons.find((l) => !(st.lessons[l.id] && st.lessons[l.id].done)) || lessons[0];
     const totalMin = lessons.reduce((a, l) => a + l.minutes, 0);
     const S = EC.STATS;
     root.innerHTML = `
@@ -24,10 +21,10 @@
             <div>
               <p class="eyebrow rise">Módulo de capacitación · ${lessons.length} lecciones · ≈ ${totalMin} min</p>
               <h1 class="page-title rise d1" tabindex="-1">Geografía<em>del Ecuador</em></h1>
-              <p class="lede rise d2">Del Pacífico a la selva, pasando por la cordillera. Un recorrido con mapa interactivo por las regiones, el relieve, el agua y el clima del país, con práctica y una evaluación final.</p>
+              <p class="lede rise d2">Del Pacífico a la selva, pasando por la cordillera. Un mapa interactivo para ubicar provincias, cantones y ciudades, con sus cabeceras y puntos de referencia, y lecciones para interpretar una dirección dictada.</p>
               <div class="hero-actions rise d3">
-                <a class="btn arrow" href="#/leccion/${next.id}">${done ? 'Continuar' : 'Empezar'} · lección ${next.n}</a>
-                <a class="btn ghost" href="#/atlas">Explorar el atlas</a>
+                <a class="btn arrow" href="#/atlas">Abrir el atlas</a>
+                <a class="btn ghost" href="#/ciudades">Ciudades y referencias</a>
               </div>
             </div>
             <div class="hero-meta rise d4">
@@ -56,7 +53,7 @@
               ['Longitud', '75° 11′ a 81° 01′ O', 'Galápagos: entre 89° y 92° O'],
               ['Punto más alto', 'Chimborazo, 6 263 m', 'El más lejano al centro de la Tierra'],
               ['Capital', 'Quito, 2 850 m', 'Segunda ciudad más poblada tras Guayaquil'],
-              ['División', '24 provincias', `${S.total.cantones} cantones`],
+              ['División', '24 provincias', `${S.total.cantones} cantones, cada uno con su cabecera`],
               ['Regiones', 'Cuatro', 'Costa, Sierra, Amazonía e Insular'],
               ['Hora', 'UTC−5', 'En Galápagos, UTC−6'],
             ].map(([k, v, s]) => `<div class="fact"><dt>${k}</dt><dd>${T(v)}<small>${T(s)}</small></dd></div>`).join('')}
@@ -68,27 +65,25 @@
         <div class="wrap">
           <div class="section-head">
             <h2>Ruta de aprendizaje</h2>
-            <p>Seis lecciones. Cada una combina texto y mapa: mientras lees, el mapa se acerca, resalta y cambia de capas. Al final hay tres preguntas de comprobación.</p>
+            <p>Lecciones breves que combinan texto y mapa: mientras lees, el mapa se acerca y resalta las provincias de cada paso. Sirven también como consulta.</p>
           </div>
           <ol class="route">
-            ${lessons.map((l) => {
-              const ok = st.lessons[l.id] && st.lessons[l.id].done;
-              return `<li><span class="num">${String(l.n).padStart(2, '0')}</span>
+            ${lessons.map((l) => `<li><span class="num">${String(l.n).padStart(2, '0')}</span>
                 <div><h3><a href="#/leccion/${l.id}">${l.title}</a></h3><p>${l.blurb}</p></div>
-                <div class="meta"><span>${l.minutes} min</span><span class="status ${ok ? 'done' : 'todo'}">${ok ? 'Completada ' + st.lessons[l.id].score + '/' + st.lessons[l.id].total : 'Pendiente'}</span></div></li>`;
-            }).join('')}
+                <div class="meta"><span>${l.minutes} min</span></div></li>`).join('')}
           </ol>
           <div class="extras">
-            <div class="extra"><h3>Atlas libre</h3><p>Todas las provincias con su ficha: capital, superficie, población y limítrofes. Con capas de relieve, regiones, nombres y capitales.</p><a class="btn ghost sm arrow" href="#/atlas">Abrir el atlas</a></div>
-            <div class="extra"><h3>Práctica y evaluación</h3><p>Tres juegos cortos (ubicar provincias, capitales y regiones) y una evaluación final de 20 preguntas con mapa. Se aprueba con 80 %.</p><a class="btn ghost sm arrow" href="#/practica">Ir a practicar</a></div>
+            <div class="extra"><h3>Atlas</h3><p>Las 24 provincias con su ficha y, al acercar el mapa, los cantones con sus cabeceras. Capas de relieve, regiones, nombres y capitales.</p><a class="btn ghost sm arrow" href="#/atlas">Abrir el atlas</a></div>
+            <div class="extra"><h3>Cantones y cabeceras</h3><p>Tabla de los 223 cantones con búsqueda: cabecera, altitud y población. Marca los casos en que la cabecera no se llama igual que el cantón y los nombres que se repiten.</p><a class="btn ghost sm arrow" href="#/cantones">Ver cantones</a></div>
+            <div class="extra"><h3>Ciudades y referencias</h3><p>Las ciudades principales con sus sectores y puntos de referencia (terminales, aeropuertos, hospitales, estadios, centros comerciales) y una guía para orientarse.</p><a class="btn ghost sm arrow" href="#/ciudades">Ver ciudades</a></div>
           </div>
         </div>
       </section>
 
       <section class="credits">
         <div class="wrap cols">
-          <div><h4>Datos geográficos</h4><p>Límites provinciales y países vecinos: geoBoundaries (CC0), de precisión referencial; no sustituyen la cartografía oficial del IGM. Ríos: OpenStreetMap (ODbL) y Natural Earth.</p></div>
-          <div><h4>Relieve</h4><p>Sombreado calculado a partir del modelo digital de elevación de teselas Terrarium (SRTM y GEBCO, vía AWS Open Data). Los perfiles se muestrean de ese mismo modelo.</p></div>
+          <div><h4>Datos geográficos</h4><p>Límites de provincias y cantones: geoBoundaries (CC0), de precisión referencial; no sustituyen la cartografía oficial del IGM. Cabeceras: GeoNames (CC BY 4.0). Sectores y referencias de ciudades: © colaboradores de OpenStreetMap (ODbL).</p></div>
+          <div><h4>Relieve</h4><p>Sombreado calculado a partir del modelo digital de elevación de teselas Terrarium (SRTM y GEBCO, vía AWS Open Data).</p></div>
           <div><h4>Cifras</h4><p>Superficie, población (Censo 2022) y cantones por provincia, a partir de INEC. Alturas de cumbres y capitales, redondeadas y referenciales. Últimas revisiones: noviembre de 2026.</p></div>
         </div>
       </section>`;
@@ -109,7 +104,7 @@
       <h1 class="sr-only page-title" tabindex="-1">Atlas de las provincias del Ecuador</h1>
       <div class="atlas" id="atlas">
         <aside class="atlas-side" aria-label="Provincias y capas">
-          <div class="side-block"><h2>Buscar</h2><input class="search" type="search" id="q" placeholder="Provincia o capital…" aria-label="Buscar provincia o capital" autocomplete="off"></div>
+          <div class="side-block"><h2>Buscar</h2><input class="search" type="search" id="q" placeholder="Provincia, cantón o ciudad…" aria-label="Buscar provincia, cantón o cabecera" autocomplete="off"></div>
           <div class="side-block"><h2>Capas</h2><div class="layers" id="layers"></div></div>
           <div class="side-block" style="border-bottom:none"><h2>Provincias <span id="count" class="mono" style="color:var(--muted)"></span></h2><ul class="plist" id="plist"></ul></div>
         </aside>
@@ -120,13 +115,19 @@
       </div>`;
     const A = root.querySelector('#atlas'), detail = root.querySelector('#detail');
     const map = new EC.AtlasMap(root.querySelector('#map'));
-    map.setScene({ focus: 'all', tint: 0.5, labels: 'provinces', places: 'capitals', equator: true }, { animate: false });
+    map.setScene({ focus: 'all', tint: 0.5, labels: 'provinces', places: 'capitals', equator: true, cantones: true }, { animate: false });
     map.view.insertAdjacentHTML('beforeend', legendHTML());
+    const hint = el('div', { class: 'map-hint' }, 'Acerca el mapa para ver los cantones');
+    map.view.append(hint);
+    map.on('view', () => hint.classList.toggle('is-off', map.ppu >= 0.3 || !map.layer('cantones')));
+    let cantons = null;
+    U.loadScript('js/cantones-data.js').then(() => { cantons = window.EC_CANTONES; map.setCantons(cantons); buildList(norm(q.value.trim())); if (pendingCanton) { map.selectCanton(pendingCanton, { fly: true }); pendingCanton = null; } }).catch(() => hint.remove());
+    let pendingCanton = null;
 
     // Capas
     const LAYERS = [
       ['relief', 'Relieve sombreado', true], ['regions', 'Colores por región', true], ['labels', 'Nombres de provincias', true],
-      ['places', 'Capitales provinciales', true], ['equator', 'Línea equinoccial', true], ['graticule', 'Cuadrícula', true],
+      ['places', 'Capitales provinciales', true], ['cantones', 'Cantones y cabeceras', true], ['equator', 'Línea equinoccial', true], ['graticule', 'Cuadrícula', true],
     ];
     const lay = root.querySelector('#layers');
     for (const [k, label, on] of LAYERS) {
@@ -156,6 +157,17 @@
           b.addEventListener('pointerleave', () => map.setHover(null));
           buttons[id] = b;
           plist.append(el('li', null, b));
+        }
+      }
+      if (filter && filter.length >= 2 && cantons) {
+        const hits = cantons.filter((c) => norm(c.name + ' ' + c.seat).includes(filter)).slice(0, 18);
+        if (hits.length) {
+          plist.append(el('li', { class: 'grp grp-c' }, 'Cantones y cabeceras'));
+          for (const c of hits) {
+            const b = el('button', { type: 'button', 'data-cid': c.id }, [c.name, el('small', null, P[c.prov].name)]);
+            b.addEventListener('click', () => map.selectCanton(c.id, { fly: true }));
+            plist.append(el('li', null, b));
+          }
         }
       }
       count.textContent = `(${n})`;
@@ -197,6 +209,41 @@
       detail.scrollTop = 0;
     }
 
+    function showCanton(id) {
+      const c = cantons && cantons.find((x) => x.id === id);
+      A.classList.toggle('has-detail', !!c);
+      if (!c) { detail.innerHTML = ''; return; }
+      const p = P[c.prov], reg = EC.REGIONS[p.region];
+      const siblings = cantons.filter((x) => x.prov === c.prov && x.id !== c.id).sort((a, b) => a.name.localeCompare(b.name, 'es'));
+      const dens = c.pop && c.area ? c.pop / c.area : null;
+      const notes = [];
+      if (c.noPoly) notes.push('Cantón de creación reciente: su límite todavía no está dibujado en este mapa; aparece dentro del cantón de origen.');
+      if (!c.geoSeat) notes.push('La ubicación de la cabecera es aproximada (centro del cantón). Verifíquela en el mapa de despacho.');
+      detail.innerHTML = `
+        <button class="close" type="button" aria-label="Cerrar ficha">×</button>
+        <span class="chip region-chip"><i class="dot" style="--c:${reg.color}"></i>${reg.name} · ${p.name}</span>
+        <p class="eyebrow" style="margin:1rem 0 0">Cantón</p>
+        <h2 tabindex="-1" style="margin-top:.2rem">${c.name}</h2>
+        <dl class="grid">
+          <div><dt>Cabecera cantonal</dt><dd>${c.seat}${c.alt != null ? '<br><small>≈ ' + U.num(c.alt) + ' m s. n. m.</small>' : ''}</dd></div>
+          <div><dt>Provincia</dt><dd><button class="term" type="button" data-prov="${p.id}" style="font-size:inherit">${p.name}</button></dd></div>
+          <div><dt>Población del cantón</dt><dd>${c.pop ? U.num(c.pop) : '—'}<br><small>Censo 2022</small></dd></div>
+          <div><dt>Población de la cabecera</dt><dd>${c.seatPop ? U.num(c.seatPop) : '—'}</dd></div>
+          <div><dt>Superficie</dt><dd>${c.area ? U.num(c.area, c.area < 100 ? 1 : 0) : '—'} <small>km²</small></dd></div>
+          <div><dt>Densidad</dt><dd>${dens ? U.num(dens, 1) : '—'} <small>hab/km²</small></dd></div>
+        </dl>
+        ${c.lat != null ? `<p class="coords">Cabecera: ${U.dms(c.lat, 'lat')} · ${U.dms(c.lon, 'lon')}${c.geoSeat ? '' : ' (aprox.)'}</p>` : ''}
+        ${c.year ? `<p style="color:var(--muted);margin:.4rem 0 0">Cantonizado en ${c.year}.</p>` : ''}
+        ${notes.map((n) => `<p class="note-warn">${n}</p>`).join('')}
+        <h3>Otros cantones de ${p.name} (${siblings.length})</h3>
+        <div class="neigh">${siblings.map((s) => `<button class="chip" type="button" data-c="${s.id}">${s.name}</button>`).join('')}</div>`;
+      detail.querySelector('.close').onclick = () => { map.selectCanton(null); A.classList.remove('has-detail'); };
+      detail.querySelectorAll('[data-c]').forEach((b) => (b.onclick = () => map.selectCanton(b.dataset.c, { fly: true })));
+      detail.querySelector('[data-prov]').onclick = () => map.select(p.id, { fly: true });
+      detail.scrollTop = 0;
+    }
+    map.on('selectCanton', (id) => { if (id) { showCanton(id); history.replaceState(null, '', '#/atlas'); } });
+
     map.on('select', (id) => {
       showDetail(id);
       Object.entries(buttons).forEach(([k, b]) => b.setAttribute('aria-current', k === id ? 'true' : 'false'));
@@ -206,6 +253,7 @@
     map.on('hover', (id) => Object.entries(buttons).forEach(([k, b]) => b.classList.toggle('is-hover', k === id)));
 
     if (param && P[param]) setTimeout(() => map.select(param, { fly: true }), 60);
+    else if (param) pendingCanton = param;
     return { destroy: () => map.destroy() };
   };
 
@@ -214,7 +262,6 @@
     const L = EC.LESSONS.find((l) => l.id === id);
     if (!L) { root.innerHTML = '<div class="wrap" style="padding-block:4rem"><h1>Lección no encontrada</h1><p><a href="#/">Volver al inicio</a></p></div>'; return {}; }
     const idx = EC.LESSONS.indexOf(L), prev = EC.LESSONS[idx - 1], nextL = EC.LESSONS[idx + 1];
-    const st = app.state;
     root.innerHTML = `
       <header class="lesson-head"><div class="wrap">
         <div class="crumbs eyebrow"><a href="#/">Inicio</a><span>/</span><span>Lección ${L.n} de ${EC.LESSONS.length}</span><span>/</span><span>≈ ${L.minutes} min</span></div>
@@ -228,7 +275,10 @@
             <div class="body">${T(s.body)}</div>
             ${s.aside ? `<aside class="aside-note"><b>${s.aside[0]}</b>${T(s.aside[1])}</aside>` : ''}
           </section>`).join('')}
-          <section class="check" id="check" aria-labelledby="chk-h"></section>
+          <nav class="lesson-nav" aria-label="Navegación entre lecciones">
+            ${prev ? `<a class="btn ghost sm" href="#/leccion/${prev.id}">← ${prev.title}</a>` : '<span></span>'}
+            ${nextL ? `<a class="btn arrow" href="#/leccion/${nextL.id}">Lección ${nextL.n}</a>` : '<a class="btn arrow" href="#/ciudades">Ciudades y referencias</a>'}
+          </nav>
         </div>
         <div class="stage" aria-label="Mapa de la lección">
           <div class="stage-map"><div id="map" style="height:100%"></div></div>
@@ -239,6 +289,7 @@
     const map = new EC.AtlasMap(root.querySelector('#map'), { wheel: 'ctrl', touchPan: false, label: `Mapa de la lección ${L.n}` });
     map.view.insertAdjacentHTML('beforeend', legendHTML());
     const legend = map.view.querySelector('.map-legend');
+    U.loadScript('js/cantones-data.js').then(() => map.setCantons(window.EC_CANTONES)).catch(() => {});
     const aux = root.querySelector('#aux');
     let auxKind = null;
 
@@ -279,26 +330,6 @@
       if (t.dataset.prov) { map.flyTo({ provinces: [t.dataset.prov] }, 800); map.flash(t.dataset.prov); }
       document.querySelector('.stage').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     });
-
-    // Comprobación
-    const chk = root.querySelector('#check');
-    const prior = st.lessons[L.id];
-    let right = 0, answered = 0;
-    chk.innerHTML = `<h2 id="chk-h">Comprueba lo aprendido</h2><p class="sub">Tres preguntas. Se responde una vez y verás la explicación.</p><div id="qs"></div><div class="check-foot" id="foot"></div>`;
-    const qs = chk.querySelector('#qs'), foot = chk.querySelector('#foot');
-    L.check.forEach((q, i) => qs.append(EC.Quiz.question(q, i, L.check.length, (ok) => {
-      answered++; if (ok) right++;
-      if (answered === L.check.length) finish();
-    })));
-    function finish() {
-      const better = !prior || right >= prior.score;
-      st.lessons[L.id] = { done: true, score: better ? right : prior.score, total: L.check.length };
-      app.save();
-      app.updateProgress();
-      foot.innerHTML = `<span class="score">${right} de ${L.check.length}</span><span style="display:flex;gap:.6rem;flex-wrap:wrap">${nextL ? `<a class="btn arrow" href="#/leccion/${nextL.id}">Lección ${nextL.n}</a>` : '<a class="btn arrow" href="#/practica">Ir a practicar</a>'}</span>`;
-    }
-    if (prior && prior.done) foot.innerHTML = `<span class="score" style="font-size:1.2rem">Ya la completaste (${prior.score}/${prior.total})</span>${nextL ? `<a class="btn ghost sm arrow" href="#/leccion/${nextL.id}">Siguiente lección</a>` : ''}`;
-    else foot.innerHTML = prev ? `<a class="btn ghost sm" href="#/leccion/${prev.id}">← Anterior</a>` : '';
 
     return { destroy: () => { io.disconnect(); map.destroy(); } };
   };

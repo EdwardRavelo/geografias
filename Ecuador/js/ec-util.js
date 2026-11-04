@@ -54,6 +54,11 @@
   U.load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return mem; } };
   U.save = (o) => { mem = o; try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) { /* sin persistencia */ } };
 
+  U.loadScript = (src) => new Promise((res, rej) => {
+    if ([...document.scripts].some((s) => s.getAttribute('src') === src)) return res();
+    const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.append(s);
+  });
+
   U.prefersReducedMotion = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   U.emitter = (obj) => {

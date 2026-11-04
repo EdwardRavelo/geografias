@@ -10,7 +10,7 @@
   const MAIN = { x: 700, y: 110, w: 2470, h: 2740 };
   const GAL = { x: 20, y: 2230, w: 630, h: 660 };
   const INSET = { x: 34, y: 2240, w: 600, h: 640 };
-  const MAX_W = 3600, MIN_W = 110;
+  const MAX_W = 3600, MIN_W = 7;
 
   const lonX = (lon) => (lon - G.proj.main.lonRef) * G.proj.main.k;
   const latY = (lat) => (G.proj.main.latRef - lat) * G.proj.main.k;
@@ -97,7 +97,7 @@
       // Línea equinoccial y corte
       this.gEq = svg('g', { class: 'equator' }, s);
       svg('path', { class: 'eq-line', d: `M0 ${latY(0)}H${G.w}` }, this.gEq);
-      const eqT = svg('g', { transform: `translate(${lonX(-75.55)} ${latY(0)})` }, this.gEq);
+      const eqT = svg('g', { transform: `translate(${lonX(-82.6)} ${latY(0)})` }, this.gEq);
       const eqt = svg('text', { class: 'eq-text', x: 0, y: -8, 'text-anchor': 'end' }, svg('g', { class: 'inv' }, eqT));
       eqt.textContent = 'LÍNEA EQUINOCCIAL · 0° 0′ 0″';
 
@@ -262,6 +262,8 @@
       this.svg.style.setProperty('--ppu', this.ppu.toFixed(4));
       const z = this.ppu < 0.3 ? 'far' : this.ppu < 0.62 ? 'mid' : 'near';
       if (this.zoomClass !== z) { this.svg.dataset.zoom = z; this.zoomClass = z; }
+      const ultra = this.ppu >= 2.5;
+      if (this.ultra !== ultra) { this.svg.dataset.ultra = ultra ? '1' : '0'; this.ultra = ultra; }
       if (!this.pending) this.pending = requestAnimationFrame(() => { this.pending = 0; this.drawTicks(); this.layoutLabels(); this.drawScale(); });
       this.emit('view', this.vb, moving);
     }
@@ -349,9 +351,6 @@
         const nchar = Math.max(...L.lines.map((s) => s.length));
         place(L.g, L.p.label[0], L.p.label[1], nchar * 7.2 + 6, L.lines.length * 15, hl && hl.has(L.p.id) && hl.size <= 3);
       }
-      // Islas
-      const galZoom = this.vb.w < 1500 && U.isInset(this.vb.x + this.vb.w / 2, this.vb.y + this.vb.h / 2);
-      this.islLabels.forEach((g) => g.classList.toggle('is-hidden', !(galZoom && mode !== 'regions')));
       // Regiones (grandes)
       this.regLabels.forEach((g) => g.classList.toggle('is-hidden', mode !== 'regions'));
       // Ciudades con etiqueta
@@ -366,6 +365,33 @@
         g.classList.toggle('lab-off', !ok);
       });
       featLabels(this.placeEl);
+      this.layoutCantonLabels(fits);
+    }
+
+    layoutCantonLabels(fits) {
+      const ppu = this.ppu, on = this.layer('cantones') && this.cantons;
+      // Cantones: el nombre aparece cuando el polígono es lo bastante grande en pantalla
+      if (this.cLabels) {
+        for (const L of this.cLabels) {
+          let show = false;
+          if (on && ppu >= 0.3) {
+            const w = L.c.name.length * 5.8 + 10, bw = (L.c.bbox[2] - L.c.bbox[0]) * ppu, bh = (L.c.bbox[3] - L.c.bbox[1]) * ppu;
+            show = bw > w * 0.75 && bh > 18 && fits(L.c.label[0], L.c.label[1], w, 14, false);
+          }
+          L.g.classList.toggle('is-hidden', !show);
+        }
+      }
+      // Cabeceras cantonales: punto siempre (cerca), nombre si cabe
+      if (this.seatEl) {
+        for (const S of this.seatEl) {
+          let lab = false;
+          if (on && ppu >= 0.62) { const w = S.c.seat.length * 6 + 14; lab = fits(S.c.x + (w / 2 + 6) / ppu, S.c.y, w, 14, false); }
+          S.g.classList.toggle('lab-off', !lab);
+        }
+      }
+      // Marcadores de referencia y sectores
+      if (this.refEl) for (const R of this.refEl) { const w = R.m.label.length * 6.4 + 28; R.g.classList.toggle('lab-off', !(ppu >= 0.9 && fits(R.m.x + (w / 2 + 12) / ppu, R.m.y, w, 18, !!R.m.force))); }
+      if (this.sectorEl) for (const S of this.sectorEl) { const w = S.s.name.length * 6 + 8; S.g.classList.toggle('is-hidden', !fits(S.s.x, S.s.y, w, 13, false)); }
     }
 
     /* ───────────── Capas y escena ───────────── */
@@ -392,6 +418,7 @@
       r.classList.toggle('no-relief', !L('relief'));
       r.classList.toggle('no-regions', !L('regions'));
       r.classList.toggle('show-equator', !!L('equator'));
+      r.classList.toggle('show-cantones', !!L('cantones'));
       r.classList.toggle('show-graticule', L('graticule') !== false);
       this.svg.style.setProperty('--tint', String(L('tint') == null ? 0.5 : L('tint')));
       const on = (map, v) => {
@@ -415,7 +442,7 @@
 
     /* ───────────── Selección y marcas ───────────── */
     select(id, { fly = false, announce = true } = {}) {
-      this.selected = id;
+      this.selected = id; this.selectedC = null;
       for (const k of Object.keys(this.fillEl)) this.fillEl[k].classList.toggle('is-sel', k === id);
       const p = id && G.provinces.find((q) => q.id === id);
       this.selPath.setAttribute('d', p ? p.d : '');
@@ -438,6 +465,97 @@
       this.hlPath.classList.remove('pulse'); void this.hlPath.getBBox(); this.hlPath.classList.add('pulse');
       clearTimeout(this._ft);
       this._ft = setTimeout(() => { this.hlPath.classList.remove('pulse'); this.hlPath.setAttribute('d', this.hovered ? G.provinces.find((q) => q.id === this.hovered).d : ''); }, ms);
+    }
+
+    /* ───────────── Cantones, marcadores y sectores ───────────── */
+    setCantons(list) {
+      if (this.gCantons) return;
+      this.cantons = list; this.cById = {};
+      // Los límites cantonales vienen de otra fuente y cubren cuerpos de agua: se recortan al contorno provincial
+      const clip = svg('clipPath', { id: 'ec-land-clip' }, this.svg.querySelector('defs'));
+      for (const p of G.provinces) svg('path', { d: p.d }, clip);
+      this.gCantons = svg('g', { class: 'cantons', 'clip-path': 'url(#ec-land-clip)' }); this.svg.insertBefore(this.gCantons, this.gEq);
+      this.gCHit = svg('g', { class: 'chits' }); this.svg.insertBefore(this.gCHit, this.hlPath);
+      this.gSeats = svg('g', { class: 'seats' }); this.svg.insertBefore(this.gSeats, this.gLabels);
+      this.cLabels = []; this.seatEl = [];
+      for (const c of list) {
+        this.cById[c.id] = c;
+        if (c.d) {
+          svg('path', { class: 'cline', d: c.d }, this.gCantons);
+          svg('path', { class: 'chit', d: c.d, 'data-cid': c.id }, this.gCHit);
+          const g = svg('g', { class: 'clabel is-hidden', transform: `translate(${c.label[0]} ${c.label[1]})` }, this.gLabels);
+          svg('text', { 'text-anchor': 'middle', class: 'ctext2', y: 3 }, svg('g', { class: 'inv' }, g)).textContent = c.name;
+          this.cLabels.push({ g, c });
+        }
+        if (c.x != null) {
+          const g = svg('g', { class: 'seat' + (c.geoSeat ? '' : ' approx'), transform: `translate(${c.x} ${c.y})`, 'data-cid': c.id }, this.gSeats);
+          const inv = svg('g', { class: 'inv' }, g);
+          svg('circle', { r: 2.8, class: 'sdot' }, inv);
+          svg('text', { x: 6, y: 3.4, class: 'flabel slabel' }, inv).textContent = c.seat;
+          this.seatEl.push({ g, c });
+        }
+      }
+      this.applyLayers();
+    }
+
+    selectCanton(id, { fly = false } = {}) {
+      const c = this.cById && this.cById[id];
+      this.selected = null; this.selectedC = id;
+      for (const k of Object.keys(this.fillEl)) this.fillEl[k].classList.remove('is-sel');
+      this.selPath.setAttribute('d', c && c.d ? c.d : '');
+      if (fly && c) {
+        if (c.bbox) this.flyTo(this.fit({ x: c.bbox[0], y: c.bbox[1], w: Math.max(c.bbox[2] - c.bbox[0], 40), h: Math.max(c.bbox[3] - c.bbox[1], 40) }, 0.25), 800);
+        else if (c.x != null) this.flyTo(this.fit({ x: c.x - 60, y: c.y - 60, w: 120, h: 120 }, 0), 800);
+      }
+      if (c) this.live.textContent = 'Cantón ' + c.name + ', cabecera ' + c.seat;
+      this.emit('selectCanton', id);
+    }
+
+    setHoverC(id) {
+      if (this.hoveredC === id) return;
+      this.hoveredC = id;
+      const c = id && this.cById[id];
+      if (!this.hlPath.classList.contains('pulse')) this.hlPath.setAttribute('d', c && c.d ? c.d : '');
+      this.root.classList.toggle('is-hovering', !!id);
+    }
+
+    showTipForC(id, e) {
+      if (!this.opts.tooltip) return;
+      const c = this.cById[id], p = EC.PROVS[c.prov];
+      this.tip.innerHTML = `<b>${c.name}</b><span class="tip-sub">Cantón · ${p.name} · cabecera ${c.seat}</span>`;
+      this.placeTip(e);
+    }
+
+    // Marcadores de referencia: [{ id, x, y, type, glyph, label, note, force }]
+    setMarkers(list) {
+      if (!this.gRefs) { this.gRefs = svg('g', { class: 'refs' }); this.svg.insertBefore(this.gRefs, this.gLabels); }
+      this.gRefs.textContent = ''; this.refEl = []; this.refById = {};
+      for (const mk of list) {
+        const g = svg('g', { class: 'ref ref-' + mk.type, transform: `translate(${mk.x} ${mk.y})`, 'data-id': mk.id, role: 'button', tabindex: '0', 'aria-label': mk.label + (mk.note ? '. ' + mk.note : '') }, this.gRefs);
+        const inv = svg('g', { class: 'inv' }, g);
+        svg('circle', { r: 9, class: 'rbg' }, inv);
+        svg('text', { class: 'rglyph', y: 3.6, 'text-anchor': 'middle' }, inv).textContent = mk.glyph;
+        svg('text', { x: 14, y: 4, class: 'flabel rlab' }, inv).textContent = mk.label;
+        this.refEl.push({ g, m: mk }); this.refById[mk.id] = g;
+      }
+      this.layoutLabels();
+    }
+
+    markActive(id) {
+      for (const k of Object.keys(this.refById || {})) this.refById[k].classList.toggle('is-active', k === id);
+      const g = this.refById && this.refById[id];
+      if (g) g.parentNode.appendChild(g);
+    }
+
+    setSectors(list) {
+      if (!this.gSectors) { this.gSectors = svg('g', { class: 'sectors' }); this.svg.insertBefore(this.gSectors, this.gLabels); }
+      this.gSectors.textContent = ''; this.sectorEl = [];
+      for (const s of list || []) {
+        const g = svg('g', { class: 'sector', transform: `translate(${s.x} ${s.y})` }, this.gSectors);
+        svg('text', { class: 'sectxt', 'text-anchor': 'middle' }, svg('g', { class: 'inv' }, g)).textContent = s.name;
+        this.sectorEl.push({ g, s });
+      }
+      this.layoutLabels();
     }
 
     /* ───────────── Interacción ───────────── */
@@ -494,15 +612,20 @@
       window.addEventListener('pointermove', move);
       window.addEventListener('pointerup', up);
       window.addEventListener('pointercancel', up);
-      v.addEventListener('pointerleave', () => { this.hideTip(); this.setHover(null); this.coord.textContent = ''; });
+      v.addEventListener('pointerleave', () => { this.hideTip(); this.setHover(null); this.setHoverC && this.setHoverC(null); this.coord.textContent = ''; });
       v.addEventListener('click', (e) => {
         if (this.suppressClick) return;
+        const rf = e.target.closest('.ref');
+        if (rf) { this.emit('marker', rf.dataset.id); return; }
+        const ct = e.target.closest('.chit');
+        if (ct && this.layer('cantones') && this.ppu >= 0.3) { this.selectCanton(ct.dataset.cid); return; }
         const t = e.target.closest('.hit');
         if (t) this.select(t.dataset.id);
       });
       v.addEventListener('keydown', (e) => {
         const t = e.target;
         if (t.classList && t.classList.contains('hit') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); this.select(t.dataset.id); return; }
+        if (t.classList && t.classList.contains('ref') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); this.emit('marker', t.dataset.id); return; }
         if (t !== v) return;
         const step = this.vb.w * 0.12;
         const map = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
@@ -524,8 +647,11 @@
       const [lon, lat] = U.unproject(x, y, gal);
       this.coord.textContent = `${U.dms(lat, 'lat')} · ${U.dms(lon, 'lon')}`;
       const t = e.target;
-      if (t && t.classList && t.classList.contains('hit')) { this.setHover(t.dataset.id); this.showTipFor(t.dataset.id, null, e); }
-      else { this.setHover(null); this.hideTip(); }
+      const cantonsOn = this.layer('cantones') && this.ppu >= 0.3 && this.cById;
+      if (cantonsOn && t && t.classList && t.classList.contains('chit')) { this.setHover(null); this.setHoverC(t.dataset.cid); this.showTipForC(t.dataset.cid, e); }
+      else if (!cantonsOn && t && t.classList && t.classList.contains('hit')) { this.setHoverC(null); this.setHover(t.dataset.id); this.showTipFor(t.dataset.id, null, e); }
+      else if (t && t.closest && t.closest('.ref')) { this.setHover(null); this.setHoverC(null); const rf = t.closest('.ref'); const mk = this.refEl.find((r) => r.g === rf); if (mk) { this.tip.innerHTML = `<b>${mk.m.label}</b><span class="tip-sub">${mk.m.typeName}${mk.m.note ? ' · ' + mk.m.note : ''}</span>`; this.placeTip(e); } }
+      else { this.setHover(null); this.setHoverC(null); this.hideTip(); }
     }
 
     setHover(id) {

@@ -156,18 +156,18 @@ for (const c of cands) {
 
 // ───────── Lugares (capitales provinciales y otras ciudades) ─────────
 const PLACES = [
-  ['Quito', 'pichincha', -0.1807, -78.4678, 2850, 1, 'Capital de la República'], ['Guayaquil', 'guayas', -2.171, -79.9224, 4, 1, ''],
-  ['Cuenca', 'azuay', -2.9001, -79.0059, 2560, 1, ''], ['Ambato', 'tungurahua', -1.2417, -78.6197, 2577, 1, ''],
-  ['Riobamba', 'chimborazo', -1.6636, -78.6546, 2754, 1, ''], ['Latacunga', 'cotopaxi', -0.9352, -78.6155, 2750, 1, ''],
-  ['Ibarra', 'imbabura', 0.3517, -78.1223, 2225, 1, ''], ['Tulcán', 'carchi', 0.8119, -77.7173, 2980, 1, ''],
-  ['Esmeraldas', 'esmeraldas', 0.9592, -79.654, 6, 1, ''], ['Portoviejo', 'manabi', -1.0546, -80.4545, 53, 1, ''],
-  ['Santo Domingo', 'santo-domingo', -0.253, -79.1754, 655, 1, ''], ['Babahoyo', 'los-rios', -1.8022, -79.5344, 8, 1, ''],
-  ['Machala', 'el-oro', -3.2581, -79.9554, 6, 1, ''], ['Loja', 'loja', -3.9931, -79.2042, 2060, 1, ''],
-  ['Zamora', 'zamora-chinchipe', -4.0692, -78.9567, 970, 1, ''], ['Macas', 'morona-santiago', -2.3087, -78.1167, 1020, 1, ''],
-  ['Puyo', 'pastaza', -1.4824, -77.9945, 960, 1, ''], ['Tena', 'napo', -0.9938, -77.8129, 510, 1, ''],
-  ['Coca', 'orellana', -0.4667, -76.987, 250, 1, 'Francisco de Orellana'], ['Nueva Loja', 'sucumbios', 0.0847, -76.8956, 297, 1, 'Lago Agrio'],
-  ['Guaranda', 'bolivar', -1.5905, -79.0006, 2668, 1, ''], ['Azogues', 'canar', -2.7397, -78.8486, 2518, 1, ''],
-  ['Santa Elena', 'santa-elena', -2.2267, -80.8587, 6, 1, ''], ['Puerto Baquerizo Moreno', 'galapagos', -0.9, -89.6097, 6, 1, 'Isla San Cristóbal'],
+  ['Quito', 'pichincha', -0.2201, -78.5124, 2850, 1, 'Capital de la República'], ['Guayaquil', 'guayas', -2.1962, -79.8862, 4, 1, ''],
+  ['Cuenca', 'azuay', -2.8953, -78.9963, 2560, 1, ''], ['Ambato', 'tungurahua', -1.2491, -78.6167, 2577, 1, ''],
+  ['Riobamba', 'chimborazo', -1.6651, -78.6589, 2754, 1, ''], ['Latacunga', 'cotopaxi', -0.9342, -78.6152, 2750, 1, ''],
+  ['Ibarra', 'imbabura', 0.3488, -78.1246, 2225, 1, ''], ['Tulcán', 'carchi', 0.8124, -77.7171, 2980, 1, ''],
+  ['Esmeraldas', 'esmeraldas', 0.9592, -79.654, 6, 1, ''], ['Portoviejo', 'manabi', -1.0576, -80.4514, 53, 1, ''],
+  ['Santo Domingo', 'santo-domingo', -0.2537, -79.1763, 655, 1, ''], ['Babahoyo', 'los-rios', -1.8049, -79.5249, 8, 1, ''],
+  ['Machala', 'el-oro', -3.2589, -79.9588, 6, 1, ''], ['Loja', 'loja', -3.9931, -79.2042, 2060, 1, ''],
+  ['Zamora', 'zamora-chinchipe', -4.0645, -78.9512, 970, 1, ''], ['Macas', 'morona-santiago', -2.3074, -78.1203, 1020, 1, ''],
+  ['Puyo', 'pastaza', -1.4916, -78.0034, 960, 1, ''], ['Tena', 'napo', -0.9961, -77.8131, 510, 1, ''],
+  ['Coca', 'orellana', -0.4497, -76.9972, 250, 1, 'Francisco de Orellana'], ['Nueva Loja', 'sucumbios', 0.086, -76.8953, 297, 1, 'Lago Agrio'],
+  ['Guaranda', 'bolivar', -1.5911, -78.999, 2668, 1, ''], ['Azogues', 'canar', -2.7398, -78.8456, 2518, 1, ''],
+  ['Santa Elena', 'santa-elena', -2.2265, -80.8581, 6, 1, ''], ['Puerto Baquerizo Moreno', 'galapagos', -0.9017, -89.6102, 6, 1, 'Isla San Cristóbal'],
 ];
 const issues = [];
 for (const [name, pid, lat, lon, alt, cap, note] of PLACES) {
