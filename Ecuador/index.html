@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es-EC">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atlas de campo · Geografía del Ecuador</title>
+  <meta name="description" content="Módulo de capacitación sobre la geografía del Ecuador: mapa interactivo, regiones, relieve, agua, clima, práctica y evaluación.">
+  <meta name="theme-color" content="#f3ecdc">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f3ecdc'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%231c2824' stroke-width='2'/%3E%3Cpath d='M2 16h28' stroke='%23b0301c' stroke-width='2.5'/%3E%3C/svg%3E">
+  <link rel="preload" href="assets/fonts/instrument-serif-normal-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <a class="skip" href="#app">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="#/" aria-label="Atlas de campo, inicio">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="1.6"/><ellipse cx="16" cy="16" rx="5" ry="11" fill="none" stroke="currentColor" stroke-width="1"/><path d="M1 16h30" stroke="#b0301c" stroke-width="2.4"/></svg>
+        <span class="brand-name">Atlas de <em>campo</em></span>
+      </a>
+      <nav class="nav" aria-label="Principal">
+        <a href="#/" data-key="inicio"><span class="n">01</span>Inicio</a>
+        <a href="#/atlas" data-key="atlas"><span class="n">02</span>Atlas</a>
+        <a href="#/leccion/posicion" data-key="lecciones"><span class="n">03</span>Lecciones</a>
+        <a href="#/practica" data-key="practica"><span class="n">04</span>Práctica</a>
+        <a href="#/evaluacion" data-key="evaluacion"><span class="n">05</span>Evaluación</a>
+      </nav>
+      <div class="progress-pill" id="progress" role="img"><span class="txt">Lecciones 0/6</span><span class="bar"><i style="width:0"></i></span></div>
+    </div>
+  </header>
+  <main id="app" tabindex="-1"></main>
+  <footer class="footer"><div class="wrap"><span>Atlas de campo · Geografía del Ecuador</span><span>Límites referenciales con fines educativos</span></div></footer>
+  <noscript><p style="padding:2rem;font-family:sans-serif">Este módulo necesita JavaScript para mostrar el mapa interactivo.</p></noscript>
+
+  <script src="js/geo-data.js"></script>
+  <script src="js/ec-util.js"></script>
+  <script src="js/content-provincias.js"></script>
+  <script src="js/content-lecciones.js"></script>
+  <script src="js/ec-map.js"></script>
+  <script src="js/ec-charts.js"></script>
+  <script src="js/ec-views.js"></script>
+  <script src="js/ec-practice.js"></script>
+  <script src="js/ec-app.js"></script>
+</body>
+</html>

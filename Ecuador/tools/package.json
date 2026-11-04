@@ -1,0 +1,1 @@
+{"name":"ecuador-atlas-tools","private":true,"version":"1.0.0","description":"Scripts de construcción de datos (no se sirven en el módulo)","dependencies":{"pngjs":"^7.0.0","puppeteer-core":"^25.16.0","sharp":"^0.33.5"}}
