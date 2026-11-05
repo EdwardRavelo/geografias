@@ -41,6 +41,19 @@ const ANCLAS = {
     'odontoclinic': [-2.8940, -79.0130], 'bs implants': [-2.8870, -79.0050],
   },
 };
+// Barrio de cada clínica cuando el ancla es una coordenada. Si el ancla es un sector, ese sector es el barrio.
+const BARRIOS = {
+  quito: { 'kronos dental': 'Solanda', 'prevedent by axxis': 'El Recreo', 'odontopanoramic': 'El Triángulo', 'centrodent': 'San Rafael', 'pro boca san rafael': 'San Rafael', 'zavdent valle': 'Capelo', 'kronos': 'Machachi', 'dental area': 'Cayambe', 'idental cayambe': 'Cayambe', 'tutti dent': 'Guayllabamba', 'zavdent norte': 'San Carlos', 'global smile real': 'Rumiñahui' },
+  guayaquil: { 'estetica dental centenario': 'Centenario', 'estetica dental sur': 'Sur (10ma y Cuenca)', 'dental ok duran': 'Primavera 1', 'odontosmile': 'Los Álamos' },
+  cuenca: { 'inmola': 'Coliseo Gilberto Gatto', 'odontoart principal': 'González Suárez', 'dr santiago barzallo': 'Av. Loja', 'odontopro': 'Paucarbamba', 'centro norte santodonto': 'Av. de las Américas', 'odontoclinic': 'Monte Sinaí', 'bs implants': 'Av. 10 de Agosto' },
+};
+const barrioDeDireccion = (d) => {
+  const t = d.replace(/\s+/g, ' ');
+  let m = t.match(/barrio\s+([A-Za-zÁÉÍÓÚÑáéíóúñ ]+?)(?=\s+(?:calle|av\b|avenida|entre)|[,.]|$)/i); if (m) return m[1].trim();
+  m = t.match(/urb\.?\s+([A-Za-zÁÉÍÓÚÑáéíóúñ ]+?)(?=\s+(?:pasaje|calle|av\b|avenida)|[,.]|$)/i); if (m) return m[1].trim();
+  m = t.match(/sector\s+([A-Za-zÁÉÍÓÚÑáéíóúñ ]+?)(?=[,.:]|$)/i); if (m) return m[1].trim();
+  return 'Centro';
+};
 // Zonas de Cuenca según la etiqueta que trae el nombre en el listado
 const ZONA_CUENCA = { 'inmola': 'Norte', 'bs implants': 'Norte', 'odontopro': 'Centro norte', 'centro norte santodonto': 'Centro norte', 'odontoart herrerias': 'Centro', 'odontoclinic': 'Centro', 'odontoart principal': 'Centro sur' };
 
@@ -81,13 +94,18 @@ for (const c of DATA) {
   const gk = Math.round(xy[0]) + ',' + Math.round(xy[1]);
   const n = (used[gk] = (used[gk] || 0) + 1) - 1;
   if (n > 0) { const ang = (n - 1) * 2.2 + 0.6, r = 0.8 + 0.5 * Math.floor((n - 1) / 6); xy = [Math.round((xy[0] + Math.cos(ang) * r) * 10) / 10, Math.round((xy[1] + Math.sin(ang) * r) * 10) / 10]; }
+  const anc = key ? anclas[key] : null;
+  const bk = BARRIOS[placeId] && Object.keys(BARRIOS[placeId]).sort((a, c2) => c2.length - a.length).find((k) => nname.startsWith(k));
+  let barrio = bk ? BARRIOS[placeId][bk] : typeof anc === 'string' ? anc : null;
+  if (!barrio) barrio = tc(barrioDeDireccion(c.dir));
   const z = (place.zonas[zona] = place.zonas[zona] || []);
   const name = NAME_FIX[nname] || tc(c.name.replace(/,$/, '').replace(/^\((.*)\)$/, '$1').replace(/\(bco /i, '(Banco ')).replace(/Pro-boca/, 'Pro-Boca').replace(/Estetica/, 'Estética').replace(/Odontologicas/, 'Odontológicas').replace(/Herrerias/, 'Herrerías');
-  z.push({ id: placeId + '-' + (z.length + Object.values(place.zonas).reduce((a, l) => a + l.length, 0)), name, dir: c.dir.replace(/\s+\*+.*$/, ''), x: xy[0], y: xy[1] });
+  z.push({ id: placeId + '-' + (z.length + Object.values(place.zonas).reduce((a, l) => a + l.length, 0)), name, barrio, dir: c.dir.replace(/\s+\*+.*$/, ''), x: xy[0], y: xy[1] });
 }
 const ORDER = ['Norte', 'Centro norte', 'Centro', 'Centro sur', 'Sur'];
 const lugares = Object.values(places).map((p) => ({
   id: p.id, name: p.name, prov: p.prov,
+  barrios: (() => { const m = {}; Object.values(p.zonas).flat().forEach((c) => { (m[c.barrio] = m[c.barrio] || []).push(c); }); return Object.entries(m).map(([name, l]) => ({ name, x: Math.round((l.reduce((a, c) => a + c.x, 0) / l.length) * 10) / 10, y: Math.round((l.reduce((a, c) => a + c.y, 0) / l.length) * 10) / 10 + 2.2 })); })(),
   zonas: Object.entries(p.zonas).map(([name, clinicas]) => ({ name, clinicas })).sort((a, b) => { const ia = ORDER.indexOf(a.name), ib = ORDER.indexOf(b.name); return (ia < 0 ? 9 : ia) - (ib < 0 ? 9 : ib); }),
 })).sort((a, b) => b.zonas.reduce((s, z) => s + z.clinicas.length, 0) - a.zonas.reduce((s, z) => s + z.clinicas.length, 0));
 let ids = 0; lugares.forEach((l) => l.zonas.forEach((z) => z.clinicas.forEach((c) => { c.id = 'c' + ++ids; })));

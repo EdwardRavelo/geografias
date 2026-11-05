@@ -246,7 +246,7 @@
         <aside class="atlas-side" aria-label="Zonas y clínicas">
           <div class="side-block"><p class="step-tag">3 · Sector</p><label class="lbl" for="city">Ciudad</label>
             <select class="search" id="city">${provOrder.map((pv) => `<optgroup label="${esc(P[pv] ? P[pv].name : pv)}">${byProv[pv].map((l) => `<option value="${l.id}">${esc(l.name)} · ${count(l)}</option>`).join('')}</optgroup>`).join('')}</select>
-            <p class="foot-note" style="margin-top:.7rem">Clínicas dentales de la red, separadas en las zonas del listado de proveedores.</p></div>
+            <p class="foot-note" style="margin-top:.7rem">Clínicas dentales de la red, separadas en las zonas del listado de proveedores y, dentro de cada zona, por barrio.</p></div>
           <div class="side-block" style="border-bottom:none"><ul class="zones" id="zones"></ul><p class="foot-note" id="snote"></p></div>
         </aside>
         <div class="atlas-stage"><div class="stage-map"><div id="map" style="height:100%"></div></div></div>
@@ -278,6 +278,7 @@
       Object.entries(clinicBtns).forEach(([k, b]) => b.classList.toggle('is-active', k === id));
       if (clinicBtns[id]) clinicBtns[id].scrollIntoView({ block: 'nearest' });
     }
+    const conBarrios = () => place.barrios.length > 1 || (place.barrios[0] && place.barrios[0].name !== 'Centro');
     function pick(id, animate = true) {
       place = places.find((l) => l.id === id) || places[0];
       sel.value = place.id;
@@ -286,14 +287,23 @@
         const head = el('button', { type: 'button', class: 'zhead', 'aria-expanded': 'false' }, [z.name, el('small', null, z.clinicas.length + (z.clinicas.length === 1 ? ' clínica' : ' clínicas'))]);
         head.addEventListener('click', () => openZone(i));
         const ul = el('ul', { class: 'clist2' });
-        z.clinicas.forEach((c) => {
-          const b = el('button', { type: 'button' }, [el('b', null, c.name), el('span', null, c.dir || '')]);
-          b.addEventListener('click', () => focusClinic(c.id));
-          clinicBtns[c.id] = b; ul.append(el('li', null, b));
+        const groups = {};
+        z.clinicas.forEach((c) => (groups[c.barrio] = groups[c.barrio] || []).push(c));
+        Object.keys(groups).sort((a, b) => a.localeCompare(b, 'es')).forEach((bn) => {
+          if (!conBarrios()) { groups[bn].forEach((c) => { const b = el('button', { type: 'button' }, [el('b', null, c.name), el('span', null, c.dir || '')]); b.addEventListener('click', () => focusClinic(c.id)); clinicBtns[c.id] = b; ul.append(el('li', null, b)); }); return; }
+          const bh = el('li', { class: 'barrio' }, el('button', { type: 'button', class: 'bhead' }, [bn, el('small', null, String(groups[bn].length))]));
+          bh.querySelector('button').addEventListener('click', () => { map.markActive(null); map.flyTo(map.fit(boxOf(groups[bn]), 0), 600); });
+          ul.append(bh);
+          groups[bn].forEach((c) => {
+            const b = el('button', { type: 'button' }, [el('b', null, c.name), el('span', null, c.dir || '')]);
+            b.addEventListener('click', () => focusClinic(c.id));
+            clinicBtns[c.id] = b; ul.append(el('li', null, b));
+          });
         });
         zones.append(el('li', { class: 'zone' }, [head, ul]));
       });
       const all = place.zonas.flatMap((z) => z.clinicas);
+      map.setSectors(conBarrios() ? place.barrios : []);
       map.setMarkers(all.map((c) => ({ id: c.id, x: c.x, y: c.y, type: 'clinica', glyph: '+', typeName: 'Clínica', label: c.name, note: c.dir })));
       const prov = P[place.prov] ? P[place.prov].name : '';
       snote.textContent = `${place.name}${prov ? ', ' + prov : ''}. Ubicación aproximada: el punto indica el sector, no la puerta de la clínica. Confirme siempre con la dirección y el mapa de despacho.`;

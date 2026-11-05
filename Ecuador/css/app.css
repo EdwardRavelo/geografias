@@ -514,3 +514,7 @@ select.search { appearance: none; cursor: pointer; }
 .clist2 span { display: block; font-size: 0.82rem; line-height: 1.3; opacity: 0.72; }
 .ref-clinica .rbg { fill: #9c2a1c; }
 .ref-clinica .rbg { r: 7; }
+.clist2 .barrio { margin: 0.7rem 0 0.1rem; }
+.clist2 .bhead { display: flex; justify-content: space-between; align-items: baseline; padding: 0.15rem 0.4rem; font: 500 0.64rem var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--pencil-ink); }
+.clist2 .bhead small { opacity: 0.6; }
+.clist2 .bhead:hover { background: none; text-decoration: underline; }
