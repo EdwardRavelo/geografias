@@ -547,6 +547,15 @@
       if (g) g.parentNode.appendChild(g);
     }
 
+    // Áreas (barrios o parroquias): [{ id, d, hot }]. `hot` = con clínicas; el resto queda como contexto.
+    setAreas(list) {
+      if (!this.gAreas) { this.gAreas = svg('g', { class: 'areas' }); this.svg.insertBefore(this.gAreas, this.gRefs || this.gSectors || this.gLabels); }
+      this.gAreas.textContent = ''; this.areaEl = {};
+      for (const a of list || []) this.areaEl[a.id] = svg('path', { class: 'area' + (a.hot ? ' hot' : ''), d: a.d, 'data-id': a.id, 'fill-rule': 'evenodd' }, this.gAreas);
+    }
+
+    markArea(id) { for (const k of Object.keys(this.areaEl || {})) this.areaEl[k].classList.toggle('is-sel', k === id); }
+
     setSectors(list) {
       if (!this.gSectors) { this.gSectors = svg('g', { class: 'sectors' }); this.svg.insertBefore(this.gSectors, this.gLabels); }
       this.gSectors.textContent = ''; this.sectorEl = [];
@@ -617,6 +626,8 @@
         if (this.suppressClick) return;
         const rf = e.target.closest('.ref');
         if (rf) { this.emit('marker', rf.dataset.id); return; }
+        const ar = e.target.closest('.area');
+        if (ar) { this.emit('area', ar.dataset.id); return; }
         const ct = e.target.closest('.chit');
         if (ct && this.layer('cantones') && this.ppu >= 0.3) { this.selectCanton(ct.dataset.cid); return; }
         const t = e.target.closest('.hit');

@@ -246,7 +246,7 @@
         <aside class="atlas-side" aria-label="Zonas y clínicas">
           <div class="side-block"><p class="step-tag">3 · Sector</p><label class="lbl" for="city">Ciudad</label>
             <select class="search" id="city">${provOrder.map((pv) => `<optgroup label="${esc(P[pv] ? P[pv].name : pv)}">${byProv[pv].map((l) => `<option value="${l.id}">${esc(l.name)} · ${count(l)}</option>`).join('')}</optgroup>`).join('')}</select>
-            <p class="foot-note" style="margin-top:.7rem">Clínicas dentales de la red, separadas en las zonas del listado de proveedores y, dentro de cada zona, por barrio.</p></div>
+            <p class="foot-note" style="margin-top:.7rem">Clínicas dentales de la red, separadas en las zonas del listado de proveedores y, dentro de cada zona, por barrio. En Quito, Guayaquil y Cuenca los barrios se dibujan con sus límites (parroquias urbanas y barrios de OpenStreetMap).</p></div>
           <div class="side-block" style="border-bottom:none"><ul class="zones" id="zones"></ul><p class="foot-note" id="snote"></p></div>
         </aside>
         <div class="atlas-stage"><div class="stage-map"><div id="map" style="height:100%"></div></div></div>
@@ -267,6 +267,13 @@
       zones.querySelectorAll('.zone').forEach((li, k) => { const on = k === i; li.classList.toggle('is-open', on); li.querySelector('.zhead').setAttribute('aria-expanded', on); });
       map.markActive(null);
       if (fly) map.flyTo(map.fit(boxOf(place.zonas[i].clinicas), 0), 700);
+    }
+    function flyBarrio(list) {
+      map.markActive(null);
+      const pg = list[0].pg, el2 = pg && map.areaEl && map.areaEl[pg];
+      map.markArea(pg || null);
+      if (el2) { const bb = el2.getBBox(); map.flyTo(map.fit({ x: bb.x, y: bb.y, w: bb.width, h: bb.height }, 0.08), 600); }
+      else map.flyTo(map.fit(boxOf(list), 0), 600);
     }
     function focusClinic(id) {
       const zi = place.zonas.findIndex((z) => z.clinicas.some((c) => c.id === id));
@@ -292,7 +299,7 @@
         Object.keys(groups).sort((a, b) => a.localeCompare(b, 'es')).forEach((bn) => {
           if (!conBarrios()) { groups[bn].forEach((c) => { const b = el('button', { type: 'button' }, [el('b', null, c.name), el('span', null, c.dir || '')]); b.addEventListener('click', () => focusClinic(c.id)); clinicBtns[c.id] = b; ul.append(el('li', null, b)); }); return; }
           const bh = el('li', { class: 'barrio' }, el('button', { type: 'button', class: 'bhead' }, [bn, el('small', null, String(groups[bn].length))]));
-          bh.querySelector('button').addEventListener('click', () => { map.markActive(null); map.flyTo(map.fit(boxOf(groups[bn]), 0), 600); });
+          bh.querySelector('button').addEventListener('click', () => flyBarrio(groups[bn]));
           ul.append(bh);
           groups[bn].forEach((c) => {
             const b = el('button', { type: 'button' }, [el('b', null, c.name), el('span', null, c.dir || '')]);
@@ -303,17 +310,26 @@
         zones.append(el('li', { class: 'zone' }, [head, ul]));
       });
       const all = place.zonas.flatMap((z) => z.clinicas);
+      map.setAreas(place.areas || []);
       map.setSectors(conBarrios() ? place.barrios : []);
       map.setMarkers(all.map((c) => ({ id: c.id, x: c.x, y: c.y, type: 'clinica', glyph: '+', typeName: 'Clínica', label: c.name, note: c.dir })));
       const prov = P[place.prov] ? P[place.prov].name : '';
       snote.textContent = `${place.name}${prov ? ', ' + prov : ''}. Ubicación aproximada: el punto indica el sector, no la puerta de la clínica. Confirme siempre con la dirección y el mapa de despacho.`;
       map.setScene({ ...SCENE, focus: 'all' }, { animate: false });
-      map.flyTo(map.fit(boxOf(place.zonas[0].clinicas), 0), animate ? 700 : 1);
+      { const f0 = map.fit(boxOf(place.zonas[0].clinicas), 0); if (animate) map.flyTo(f0, 700); else map.setView(map.clampView(f0)); }
       openZone(0, false);
       history.replaceState(null, '', '#/sectores/' + place.id);
     }
     sel.addEventListener('change', () => pick(sel.value));
     map.on('marker', (id) => focusClinic(id));
+    map.on('area', (id) => {
+      const all = place.zonas.flatMap((z) => z.clinicas.filter((c) => c.pg === id));
+      map.markArea(id);
+      if (!all.length) return;
+      const zi = place.zonas.findIndex((z) => z.clinicas.some((c) => c.pg === id));
+      openZone(zi, false); flyBarrio(all);
+      if (clinicBtns[all[0].id]) clinicBtns[all[0].id].scrollIntoView({ block: 'nearest' });
+    });
     pick(param, false);
     return { destroy: () => map.destroy() };
   };

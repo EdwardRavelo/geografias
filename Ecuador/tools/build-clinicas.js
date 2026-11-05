@@ -63,6 +63,7 @@ const CITY = { 'EL COCA': 'El Coca', 'ESMERALDA': 'Esmeraldas', 'PELILEO': 'Peli
 const ZONA_NOMBRE = { 'VALLES DE  TUMBACO, CUMBAYA Y PUEMBO': 'Valles de Tumbaco, Cumbayá y Puembo', 'VALLES DE LOS CHILLOS/ SAN RAFAEL': 'Valles de los Chillos y San Rafael', 'NORTE': 'Norte', 'SUR': 'Sur', 'CENTRO': 'Centro', 'MACHACHI': 'Machachi', 'CAYAMBE': 'Cayambe', 'GUAYLLABAMBA': 'Guayllabamba', 'DURÁN': 'Durán', 'MILAGRO': 'Milagro' };
 const NAME_FIX = { 'prevedent by axxis': 'Prevedent by Axxis' };
 
+const POLYS = require('./lib/poligonos.js')(project, path.join(__dirname, 'cache'), { quito: 'Quito', guayaquil: 'Guayaquil', cuenca: 'Cuenca' });
 const places = {};
 const used = {};
 const log = [];
@@ -98,14 +99,25 @@ for (const c of DATA) {
   const bk = BARRIOS[placeId] && Object.keys(BARRIOS[placeId]).sort((a, c2) => c2.length - a.length).find((k) => nname.startsWith(k));
   let barrio = bk ? BARRIOS[placeId][bk] : typeof anc === 'string' ? anc : null;
   if (!barrio) barrio = tc(barrioDeDireccion(c.dir));
+  let pg = null;
+  const polys = POLYS[placeId];
+  if (polys) {
+    const hits = polys.filter((p) => POLYS.pip(xy, p.rings)).sort((a, b) => b.level - a.level);
+    if (hits.length) { pg = hits[0].id; barrio = hits[0].name; }
+  }
   const z = (place.zonas[zona] = place.zonas[zona] || []);
   const name = NAME_FIX[nname] || tc(c.name.replace(/,$/, '').replace(/^\((.*)\)$/, '$1').replace(/\(bco /i, '(Banco ')).replace(/Pro-boca/, 'Pro-Boca').replace(/Estetica/, 'Estética').replace(/Odontologicas/, 'Odontológicas').replace(/Herrerias/, 'Herrerías');
-  z.push({ id: placeId + '-' + (z.length + Object.values(place.zonas).reduce((a, l) => a + l.length, 0)), name, barrio, dir: c.dir.replace(/\s+\*+.*$/, ''), x: xy[0], y: xy[1] });
+  z.push({ id: placeId + '-' + (z.length + Object.values(place.zonas).reduce((a, l) => a + l.length, 0)), name, barrio, pg, dir: c.dir.replace(/\s+\*+.*$/, ''), x: xy[0], y: xy[1] });
 }
 const ORDER = ['Norte', 'Centro norte', 'Centro', 'Centro sur', 'Sur'];
 const lugares = Object.values(places).map((p) => ({
   id: p.id, name: p.name, prov: p.prov,
-  barrios: (() => { const m = {}; Object.values(p.zonas).flat().forEach((c) => { (m[c.barrio] = m[c.barrio] || []).push(c); }); return Object.entries(m).map(([name, l]) => ({ name, x: Math.round((l.reduce((a, c) => a + c.x, 0) / l.length) * 10) / 10, y: Math.round((l.reduce((a, c) => a + c.y, 0) / l.length) * 10) / 10 + 2.2 })); })(),
+  areas: (() => {
+    const polys = POLYS[p.id]; if (!polys) return undefined;
+    const hot = new Set(Object.values(p.zonas).flat().map((c) => c.pg).filter(Boolean));
+    return polys.filter((q) => q.level === 9 || hot.has(q.id)).map((q) => ({ id: q.id, name: q.name, hot: hot.has(q.id), d: q.d }));
+  })(),
+  barrios: (() => { const m = {}; Object.values(p.zonas).flat().forEach((c) => { (m[c.barrio] = m[c.barrio] || []).push(c); }); const polys = POLYS[p.id] || []; return Object.entries(m).map(([name, l]) => { const q = l[0].pg && polys.find((z) => z.id === l[0].pg); return q ? { name, pg: q.id, x: q.cx, y: q.cy } : { name, x: Math.round((l.reduce((a, c) => a + c.x, 0) / l.length) * 10) / 10, y: Math.round((l.reduce((a, c) => a + c.y, 0) / l.length) * 10) / 10 + 2.2 }; }); })(),
   zonas: Object.entries(p.zonas).map(([name, clinicas]) => ({ name, clinicas })).sort((a, b) => { const ia = ORDER.indexOf(a.name), ib = ORDER.indexOf(b.name); return (ia < 0 ? 9 : ia) - (ib < 0 ? 9 : ib); }),
 })).sort((a, b) => b.zonas.reduce((s, z) => s + z.clinicas.length, 0) - a.zonas.reduce((s, z) => s + z.clinicas.length, 0));
 let ids = 0; lugares.forEach((l) => l.zonas.forEach((z) => z.clinicas.forEach((c) => { c.id = 'c' + ++ids; })));

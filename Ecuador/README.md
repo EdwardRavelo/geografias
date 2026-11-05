@@ -4,7 +4,7 @@ Guía de consulta para ubicar direcciones dictadas por teléfono. Las direccione
 
 1. **Provincia**: las 24 provincias en el mapa, ordenadas por número de casos, con capital, región, ciudades frecuentes y limítrofes.
 2. **Ciudad**: las ciudades más frecuentes (las que superan 10 casos en el reporte), con su provincia, cantón y altitud.
-3. **Sector**: las clínicas dentales de la red en el mapa, separadas por las zonas del listado de proveedores (Quito: norte, centro, sur, valles, Machachi, Cayambe, Guayllabamba; Guayaquil: norte, centro, sur, Durán, Milagro; Cuenca por zonas; y 28 ciudades más). La ubicación es aproximada: el sector o la cabecera, no la puerta.
+3. **Sector**: las clínicas dentales de la red en el mapa, separadas por las zonas del listado de proveedores (Quito: norte, centro, sur, valles, Machachi, Cayambe, Guayllabamba; Guayaquil: norte, centro, sur, Durán, Milagro; Cuenca por zonas; y 28 ciudades más). En Quito, Guayaquil y Cuenca el mapa dibuja los límites de los barrios (parroquias urbanas y barrios de OpenStreetMap; `tools/fetch-barrios.js`) y cada clínica se asigna al que la contiene. La ubicación es aproximada: el sector o la cabecera, no la puerta.
 
 La portada (`#/`) es una introducción breve al país: seis datos y cómo se dicta una dirección.
 

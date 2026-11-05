@@ -518,3 +518,7 @@ select.search { appearance: none; cursor: pointer; }
 .clist2 .bhead { display: flex; justify-content: space-between; align-items: baseline; padding: 0.15rem 0.4rem; font: 500 0.64rem var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--pencil-ink); }
 .clist2 .bhead small { opacity: 0.6; }
 .clist2 .bhead:hover { background: none; text-decoration: underline; }
+.area { fill: none; stroke: var(--ink); stroke-opacity: 0.28; stroke-width: 0.8; vector-effect: non-scaling-stroke; pointer-events: all; }
+.area.hot { fill: var(--pencil); fill-opacity: 0.16; stroke: var(--pencil-ink); stroke-opacity: 0.8; stroke-width: 1.4; cursor: pointer; }
+.area.hot:hover { fill-opacity: 0.28; }
+.area.is-sel { fill: var(--pencil); fill-opacity: 0.34; stroke-width: 2.2; }
