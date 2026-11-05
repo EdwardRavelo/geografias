@@ -4,7 +4,7 @@ Guía de consulta para ubicar direcciones dictadas por teléfono. Las direccione
 
 1. **Provincia**: las 24 provincias en el mapa, ordenadas por número de casos, con capital, región, ciudades frecuentes y limítrofes.
 2. **Ciudad**: las ciudades más frecuentes (las que superan 10 casos en el reporte), con su provincia, cantón y altitud.
-3. **Sector**: barrios y sectores de cada ciudad ubicados en el mapa, con búsqueda.
+3. **Sector**: las zonas de Quito, Guayaquil y Cuenca (norte, centro, sur, valles…) con sectores de ejemplo en el mapa. No lista todos los barrios.
 
 La portada (`#/`) es una introducción breve al país: seis datos y cómo se dicta una dirección.
 
@@ -13,7 +13,7 @@ La portada (`#/`) es una introducción breve al país: seis datos y cómo se dic
 ## De dónde sale qué
 - **Qué ciudades y en qué orden:** reporte de asistencias (`transference_*.xlsx`, junio a octubre de 2026, 2 763 casos en Ecuador). Solo se guarda el conteo agregado en `tools/data/frecuencia.json`; el Excel y los datos de personas no se publican.
 - Algunas «ciudades» del reporte son en realidad barrios o parroquias (Belisario Quevedo, Solanda, Bellavista, Lizarzaburu, Ayacucho, Carcelén…). El constructor las suma a su ciudad y las lista como sector.
-- **Sectores:** `tools/sectores-curados.json` lista los sectores que se usan en Quito, Guayaquil y Cuenca; cada uno se ubica con GeoNames y OpenStreetMap (`tools/sectores-manual.json` corrige los que ninguna fuente trae). Las demás ciudades muestran los barrios más cercanos al centro según esas fuentes, y solo aparecen en la sección Sector si hay al menos 5.
+- **Zonas y sectores:** el texto de cada zona está en `js/content-zonas.js`. Los sectores de ejemplo se ubican con GeoNames y OpenStreetMap a partir de `tools/sectores-curados.json` (`tools/sectores-manual.json` corrige los que ninguna fuente trae).
 
 ## Límites del módulo
 Es una ayuda de contexto. **No sustituye** el mapa de despacho ni la ubicación en vivo del cliente. Los límites son referenciales y las posiciones de los sectores son aproximadas. El mapa no muestra calles.

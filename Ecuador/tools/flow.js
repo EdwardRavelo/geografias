@@ -32,13 +32,10 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   console.log('ciudades:', nCities);
 
   await go('#/sectores/quito');
-  const nSec = (await p.$$('#slist button')).length;
-  ok(nSec > 20, 'Quito debe tener sectores');
-  await p.type('#q', 'villa'); await sleep(300);
-  const first = await p.$('#slist button');
-  ok(!!first, 'la búsqueda de sector debe encontrar Villaflora');
-  if (first) { await first.click(); await sleep(900); ok(!!(await p.$('.ref.is-active')), 'debe resaltar el marcador'); }
-  console.log('sectores Quito:', nSec);
+  ok((await p.$$('.zone')).length === 5, 'Quito debe tener 5 zonas');
+  await p.click('.zone:nth-child(3) button'); await sleep(900);
+  ok((await p.$$('.ref')).length >= 4, 'la zona Sur debe mostrar sectores en el mapa');
+  await go('#/sectores/cuenca'); ok((await p.$$('.zone')).length === 5, 'Cuenca debe tener 5 zonas');
 
   await go('#/atlas');
   ok((await p.evaluate(() => location.hash)) === '#/provincias', 'las rutas antiguas deben redirigir');

@@ -76,13 +76,13 @@ for (const c of Object.values(cities).sort((a, b) => b.n - a.n)) {
       if (used.has(nw)) continue;
       add(w, pool[0], extra[nw] ? { n: extra[nw] } : {});
     }
-  } else {
+  } else if (process.env.TODOS) {
     // sin lista curada: barrios conocidos, el más cercano al centro primero
     const seen = new Set();
     const pool = cands.filter((g) => /^(PPLX|suburb|quarter|neighbourhood)$/.test(g.cls) && !/(centro comercial|hospital|polic|condominio|mirador|colegio|escuela|universidad|iglesia|cementerio|parque|mall|^cdla|^urb|conjunto|etapa)/i.test(g.name) && g.name.length < 32)
       .sort((a, b) => km(c.lat, c.lon, a.lat, a.lon) - km(c.lat, c.lon, b.lat, b.lon));
     for (const g of pool) { const k = norm(g.name); if (seen.has(k)) continue; seen.add(k); add(g.name, g); if (sectors.length >= 16) break; }
-    if (!hasOsm) report.push(`${c.name}: solo GeoNames (aún sin OSM)`);
+    if (!hasOsm && process.env.TODOS) report.push(`${c.name}: solo GeoNames (aún sin OSM)`);
   }
   for (const s of folded[c.id] || []) if (!used.has(norm(s.name))) report.push(`${c.name}: sector del reporte «${s.name}» (${s.n}) sin ubicar`);
   const [x, y] = project(c.lon, c.lat);

@@ -71,7 +71,7 @@
           <ol class="route">
             <li><span class="num">01</span><div><h3><a href="#/provincias">Provincia</a></h3><p>Las 24 provincias en el mapa, con su capital y las ciudades que más se piden. ${top4.map(([id]) => P[id].name).join(', ')} concentran el ${top4pct} % de los casos.</p></div><div class="meta"><span>24</span></div></li>
             <li><span class="num">02</span><div><h3><a href="#/ciudades">Ciudad</a></h3><p>Las ${CITIES.length} ciudades más frecuentes, ordenadas por número de casos, con su provincia y su cantón.</p></div><div class="meta"><span>${CITIES.length}</span></div></li>
-            <li><span class="num">03</span><div><h3><a href="#/sectores">Sector</a></h3><p>Barrios y sectores de cada ciudad ubicados en el mapa, para quienes dictan «por la Villaflora» o «cerca de la Kennedy».</p></div><div class="meta"><span>${CITIES.filter((c) => c.sectores.length).length} ciudades</span></div></li>
+            <li><span class="num">03</span><div><h3><a href="#/sectores">Sector</a></h3><p>Las zonas de Quito, Guayaquil y Cuenca (norte, centro, sur, valles) con sectores de ejemplo en el mapa, para ubicar un «por la Villaflora» o un «cerca de la Kennedy».</p></div><div class="meta"><span>3 ciudades</span></div></li>
           </ol>
           <p class="foot-note" style="margin-top:var(--s5)">Las ciudades y su orden salen del reporte de asistencias de ${periodo()} (${U.num(GUIA.total)} casos). Es una ayuda de contexto: la dirección exacta se confirma siempre con el mapa de despacho o la ubicación que comparte el cliente.</p>
         </div>
@@ -211,9 +211,9 @@
           <div><dt>Altitud</dt><dd>${alt != null ? '≈ ' + U.num(alt) + ' <small>m</small>' : '—'}</dd></div>
           <div><dt>Casos reportados</dt><dd>${U.num(c.n)}<br><small>${pct(c.n)} % del total</small></dd></div>
         </dl>
-        ${c.sectores.length ? `<a class="btn arrow" href="#/sectores/${c.id}" style="margin-top:1.2rem">Ver sus ${c.sectores.length} sectores</a>` : '<p class="note-warn">Aún no hay sectores cargados para esta ciudad. Se ubica con el mapa de despacho.</p>'}
+        ${EC.ZONAS[c.id] ? `<a class="btn arrow" href="#/sectores/${c.id}" style="margin-top:1.2rem">Ver sus zonas</a>` : ''}
         ${same.length ? `<h3>Otras ciudades de ${p.name}</h3><div class="neigh">${same.map((x) => `<button class="chip" type="button" data-c="${x.id}">${esc(x.name)}</button>`).join('')}</div>` : ''}
-        <p class="note-warn">Ubicación de la cabecera cantonal. Úsela para orientarse; confirme la dirección con el mapa de despacho.</p>`;
+        <p class="note-warn">El punto es la cabecera cantonal. Úselo para orientarse y confirme la dirección con el mapa de despacho.</p>`;
       detail.querySelectorAll('[data-c]').forEach((b) => (b.onclick = () => pick(b.dataset.c)));
       detail.scrollTop = 0;
     }
@@ -232,56 +232,54 @@
     return { destroy: () => map.destroy() };
   };
 
-  /* ═════════════ 3 · Sector ═════════════ */
+  /* ═════════════ 3 · Sector (zonas de la ciudad) ═════════════ */
   V.sectores = function (root, app, param) {
-    const WITH = CITIES.filter((c) => c.sectores.length);
+    const IDS = Object.keys(EC.ZONAS).map((id) => cityById(id)).filter(Boolean);
     root.innerHTML = `
-      <h1 class="sr-only page-title" tabindex="-1">Sectores de cada ciudad</h1>
+      <h1 class="sr-only page-title" tabindex="-1">Zonas y sectores de la ciudad</h1>
       <div class="atlas sectors" id="sectors">
-        <aside class="atlas-side" aria-label="Sectores">
-          <div class="side-block"><p class="step-tag">3 · Sector</p><label class="lbl" for="city">Ciudad</label><select class="search" id="city">${WITH.map((c) => `<option value="${c.id}">${esc(c.name)} · ${P[c.prov].name}</option>`).join('')}</select></div>
-          <div class="side-block"><input class="search" type="search" id="q" placeholder="Buscar sector…" aria-label="Buscar sector" autocomplete="off"></div>
-          <div class="side-block" style="border-bottom:none"><h2 id="shead">Sectores <span id="count" class="mono" style="color:var(--muted)"></span></h2><ul class="plist" id="slist"></ul><p class="foot-note" id="snote"></p></div>
+        <aside class="atlas-side" aria-label="Zonas">
+          <div class="side-block"><p class="step-tag">3 · Sector</p><div class="filters" id="tabs" role="group" aria-label="Ciudad">${IDS.map((c) => `<button type="button" class="chip tab" data-city="${c.id}">${esc(c.name)}</button>`).join('')}</div></div>
+          <div class="side-block" style="border-bottom:none"><p id="resumen" class="resumen"></p><h2>Zonas</h2><ul class="zones" id="zones"></ul><p class="foot-note" id="snote"></p></div>
         </aside>
         <div class="atlas-stage"><div class="stage-map"><div id="map" style="height:100%"></div></div></div>
       </div>`;
-    const sel = root.querySelector('#city'), q = root.querySelector('#q'), slist = root.querySelector('#slist'), count = root.querySelector('#count'), snote = root.querySelector('#snote');
-    const map = new EC.AtlasMap(root.querySelector('#map'), { label: 'Mapa de los sectores de la ciudad' });
+    const tabs = root.querySelector('#tabs'), zones = root.querySelector('#zones'), resumen = root.querySelector('#resumen'), snote = root.querySelector('#snote');
+    const map = new EC.AtlasMap(root.querySelector('#map'), { label: 'Mapa de las zonas de la ciudad' });
     const SCENE = { tint: 0.4, labels: false, places: false, equator: false, cantones: false, regions: true };
     map.setScene({ ...SCENE, focus: 'all' }, { animate: false });
-    let city = null;
-    const buttons = {};
-    function buildList() {
-      const filter = norm(q.value.trim());
-      slist.innerHTML = ''; let n = 0;
-      for (const s of city.sectores.slice().sort((a, b) => a.name.localeCompare(b.name, 'es'))) {
-        if (filter && !norm(s.name).includes(filter)) continue;
-        n++;
-        const b = el('button', { type: 'button', 'data-s': s.name }, [s.name, el('small', null, s.n ? U.num(s.n) + (s.n === 1 ? ' caso' : ' casos') : '')]);
-        b.addEventListener('click', () => focus(s.name));
-        buttons[s.name] = b; slist.append(el('li', null, b));
-      }
-      count.textContent = `(${n})`;
-      if (!n) slist.append(el('li', { class: 'empty' }, 'Ningún sector con ese nombre.'));
-    }
-    function focus(name) {
-      const s = city.sectores.find((x) => x.name === name); if (!s) return;
-      map.markActive(city.id + '|' + name);
-      map.flyTo(map.fit({ x: s.x - 9, y: s.y - 9, w: 18, h: 18 }, 0), 700);
-      Object.entries(buttons).forEach(([k, b]) => b.setAttribute('aria-current', k === name ? 'true' : 'false'));
+    let city = null, active = null;
+    const sectorsOf = (z) => z.sectores.map((n) => city.sectores.find((s) => norm(s.name) === norm(n))).filter(Boolean);
+    function showZone(i) {
+      active = i;
+      const list = city.zonas[i] ? sectorsOf(city.zonas[i]) : [];
+      zones.querySelectorAll('.zone').forEach((li, k) => { const on = k === i; li.classList.toggle('is-open', on); li.querySelector('button').setAttribute('aria-expanded', on); });
+      map.setMarkers(list.map((s) => ({ id: s.name, x: s.x, y: s.y, type: 'sector', glyph: '', typeName: 'Sector', label: s.name, note: '' })));
+      if (list.length) {
+        const xs = list.map((s) => s.x), ys = list.map((s) => s.y);
+        const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+        const w = Math.max((x1 - x0) * 1.8, 70), h = Math.max((y1 - y0) * 1.8, 70);
+        map.flyTo(map.fit({ x: (x0 + x1) / 2 - w / 2, y: (y0 + y1) / 2 - h / 2, w, h }, 0), 700);
+      } else map.flyTo(map.fit({ x: city.x - 25, y: city.y - 25, w: 50, h: 50 }, 0), 700);
     }
     function pick(id, animate = true) {
-      const c = cityById(id) && cityById(id).sectores.length ? cityById(id) : WITH[0];
-      city = c; sel.value = c.id; q.value = '';
-      map.setMarkers(c.sectores.map((s) => ({ id: c.id + '|' + s.name, x: s.x, y: s.y, type: 'sector', glyph: '', typeName: 'Sector', label: s.name, note: '' })));
-      map.setScene({ ...SCENE, focus: { box: c.view } }, { animate });
-      buildList();
-      snote.textContent = `${c.name}, ${P[c.prov].name}. Posiciones aproximadas (GeoNames y OpenStreetMap): sirven para orientarse, no para despachar.`;
-      history.replaceState(null, '', '#/sectores/' + c.id);
+      city = IDS.find((c) => c.id === id) || IDS[0];
+      city = { ...city, zonas: EC.ZONAS[city.id].zonas };
+      tabs.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-pressed', b.dataset.city === city.id));
+      resumen.textContent = EC.ZONAS[city.id].resumen;
+      zones.innerHTML = '';
+      city.zonas.forEach((z, i) => {
+        const b = el('button', { type: 'button', 'aria-expanded': 'false' }, [z.name, el('small', null, z.sectores.length ? z.sectores.length + ' en el mapa' : '')]);
+        b.addEventListener('click', () => showZone(i));
+        zones.append(el('li', { class: 'zone' }, [b, el('p', null, z.desc)]));
+      });
+      snote.textContent = `${city.name}, ${P[city.prov].name}. Los puntos son posiciones aproximadas (GeoNames y OpenStreetMap) para orientarse; no sirven para despachar.`;
+      map.setMarkers([]);
+      map.setScene({ ...SCENE, focus: { box: city.view } }, { animate });
+      history.replaceState(null, '', '#/sectores/' + city.id);
+      showZone(0);
     }
-    sel.addEventListener('change', () => pick(sel.value));
-    q.addEventListener('input', buildList);
-    map.on('marker', (id) => { const name = id.split('|').slice(1).join('|'); focus(name); if (buttons[name]) buttons[name].scrollIntoView({ block: 'nearest' }); });
+    tabs.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => pick(b.dataset.city)));
     pick(param, false);
     return { destroy: () => map.destroy() };
   };
