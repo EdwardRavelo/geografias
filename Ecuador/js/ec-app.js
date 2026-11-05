@@ -6,11 +6,11 @@
   const app = (EC.app = {});
 
   const routes = [
-    [/^\/?$|^\/inicio$/, 'inicio', () => 'Inicio', (m) => EC.views.home(root, app)],
-    [/^\/cantones$/, 'cantones', () => 'Cantones y cabeceras', (m) => EC.views.cantones(root, app)],
-    [/^\/ciudades(?:\/([\w-]+))?$/, 'ciudades', () => 'Ciudades y referencias', (m) => EC.views.ciudades(root, app, m[1])],
-    [/^\/atlas(?:\/([\w-]+))?$/, 'atlas', () => 'Atlas', (m) => EC.views.atlas(root, app, m[1])],
-    [/^\/leccion\/([\w-]+)$/, 'lecciones', (m) => { const l = EC.LESSONS.find((x) => x.id === m[1]); return l ? `Lección ${l.n}: ${l.title}` : 'Lección'; }, (m) => EC.views.lesson(root, app, m[1])],
+    [/^\/?$|^\/inicio$/, 'inicio', () => 'Inicio', () => EC.views.home(root)],
+    [/^\/provincias(?:\/([\w-]+))?$/, 'provincias', () => 'Provincia', (m) => EC.views.provincias(root, app, m[1])],
+    [/^\/ciudades(?:\/([\w-]+))?$/, 'ciudades', () => 'Ciudad', (m) => EC.views.ciudades(root, app, m[1])],
+    [/^\/sectores(?:\/([\w-]+))?$/, 'sectores', () => 'Sector', (m) => EC.views.sectores(root, app, m[1])],
+    [/^\/(?:atlas|cantones|leccion)(?:\/.*)?$/, 'inicio', () => 'Inicio', () => { location.replace('#/provincias'); }],
   ];
 
   let current = null;
@@ -25,7 +25,7 @@
       const m = re.exec(path);
       if (!m) continue;
       matched = true;
-      document.title = `${title(m)} · Atlas de campo — Geografía del Ecuador`;
+      document.title = `${title(m)} · Ecuador`;
       document.querySelectorAll('.nav a').forEach((a) => (key === a.dataset.key ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current')));
       try { current = fn(m) || null; } catch (e) { console.error(e); root.innerHTML = '<div class="wrap" style="padding-block:4rem"><h1>Algo salió mal</h1><p>No se pudo mostrar esta página. Intenta volver al <a href="#/">inicio</a>.</p></div>'; }
       break;

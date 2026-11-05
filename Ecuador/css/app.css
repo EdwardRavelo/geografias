@@ -476,3 +476,23 @@ button.chip[aria-pressed='true'] { background: var(--ink); color: var(--paper); 
   .atlas.cities .atlas-side { border-right: none; border-top: 1px solid var(--ink); order: 1; }
   .atlas.cities.has-detail .detail { position: static; width: auto; box-shadow: none; border-left: none; border-top: 1px solid var(--ink); visibility: visible; order: 2; }
 }
+
+/* ── Tres secciones: Provincia · Ciudad · Sector ── */
+.step-tag { font: 500 0.7rem var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--pencil-ink); margin: 0 0 0.7rem; }
+.lbl { display: block; font: 500 0.66rem var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.35rem; }
+select.search { appearance: none; cursor: pointer; }
+.plist .sub { display: block; font: 400 0.78rem var(--f-text); font-style: normal; opacity: 0.65; }
+.plist button > span { display: block; line-height: 1.15; }
+.plist li.empty { color: var(--muted); font-size: 0.95rem; padding: 0.4rem 0; }
+.rowlink { display: flex; justify-content: space-between; gap: 1rem; padding: 0.4rem 0.4rem; margin-left: -0.4rem; border-radius: var(--radius); color: var(--ink); text-decoration: none; font-size: 0.98rem; }
+.rowlink:hover { background: var(--paper-2); }
+.rowlink small { font: 500 0.64rem var(--f-mono); letter-spacing: 0.04em; color: var(--muted); align-self: center; }
+.ref-ciudad .rbg { fill: var(--pencil-ink); }
+.ref-sector .rbg { fill: #2f6b4a; }
+.ref-ciudad .rbg, .ref-sector .rbg { r: 6; }
+.atlas.sectors { grid-template-columns: 17.5rem minmax(0, 1fr); }
+@media (max-width: 1180px) {
+  .atlas.sectors { grid-template-columns: 1fr; height: auto; }
+  .atlas.sectors .atlas-stage { height: 64vh; min-height: 380px; order: -1; padding: 8px; }
+  .atlas.sectors .atlas-side { border-right: none; border-top: 1px solid var(--ink); order: 1; }
+}

@@ -1,4 +1,4 @@
-// Prueba de flujos de interacción (smoke test): node tools/serve.js 5191 &  node tools/flow.js
+// Prueba de flujos (smoke test): node tools/serve.js 5191 &  node tools/flow.js
 const puppeteer = require('puppeteer-core');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 (async () => {
@@ -10,43 +10,38 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   p.on('requestfailed', (r) => errs.push('fallo de red: ' + r.url()));
   await p.setViewport({ width: 1440, height: 900 });
   const go = async (h) => { await p.goto('http://localhost:5191/' + h, { waitUntil: 'load' }); await sleep(1200); };
-  const log = (...a) => console.log(...a);
   const ok = (cond, msg) => { if (!cond) errs.push('FALLO: ' + msg); };
 
-  // Portada
   await go('#/');
-  ok((await p.$$('.route li')).length === 7, 'la portada debe listar 7 lecciones');
-  ok((await p.$$('.nav a')).length === 5, 'el menú debe tener 5 enlaces');
-  log('portada: lecciones', (await p.$$('.route li')).length);
+  ok((await p.$$('.nav a')).length === 3, 'el menú debe tener exactamente 3 secciones');
+  ok((await p.$$('.route li')).length === 3, 'el inicio debe listar 3 pasos');
 
-  // Atlas: buscar un cantón y abrir su ficha
-  await go('#/atlas');
-  await p.type('#q', 'durán'); await sleep(400);
-  const hasCanton = await p.$('#plist [data-cid]');
-  ok(!!hasCanton, 'la búsqueda debe encontrar el cantón Durán');
-  if (hasCanton) { await hasCanton.click(); await sleep(1500); log('atlas cantón:', await p.$eval('#detail h2', (e) => e.textContent), '|', await p.$eval('#detail .grid', (e) => e.textContent.replace(/\s+/g, ' ').slice(0, 90))); }
-  await go('#/atlas/azuay'); log('atlas provincia:', await p.$eval('#detail h2', (e) => e.textContent));
-  await go('#/atlas/quito'); log('atlas cantón por URL:', await p.$eval('#detail h2', (e) => e.textContent).catch(() => 'sin ficha'));
+  await go('#/provincias');
+  ok((await p.$$('#plist button')).length === 24, 'deben listarse 24 provincias');
+  await p.type('#q', 'azuay'); await sleep(300);
+  await p.click('#plist button'); await sleep(1200);
+  ok((await p.$eval('#detail h2', (e) => e.textContent)) === 'Azuay', 'debe abrir la ficha de Azuay');
+  await go('#/provincias/pichincha');
+  console.log('provincia:', await p.$eval('#detail h2', (e) => e.textContent), '| ciudades:', await p.$$eval('#detail .rowlink', (r) => r.length));
 
-  // Tabla de cantones
-  await go('#/cantones');
-  log('cantones:', await p.$$eval('#rows tr', (r) => r.length));
-  await p.click('#cd'); await sleep(300);
-  log('con cabecera distinta:', await p.$$eval('#rows tr', (r) => r.length));
-  ok((await p.$$eval('#rows tr', (r) => r.length)) === 54, 'deben ser 54 cantones con otra cabecera');
-
-  // Ciudades
+  await go('#/ciudades');
+  const nCities = (await p.$$('#clist button')).length;
+  ok(nCities >= 20, 'deben listarse las ciudades frecuentes');
   await go('#/ciudades/guayaquil');
-  log('ciudad:', await p.$eval('#detail h2', (e) => e.textContent), '| marcadores:', await p.$$eval('.ref', (r) => r.length), '| referencias en lista:', await p.$$eval('[data-ref]', (r) => r.length));
-  const first = await p.$('[data-ref]'); if (first) { await first.click(); await sleep(900); ok(!!(await p.$('.ref.is-active')), 'debe resaltar el marcador'); }
+  ok((await p.$eval('#detail h2', (e) => e.textContent)) === 'Guayaquil', 'debe abrir Guayaquil');
+  console.log('ciudades:', nCities);
 
-  // Lecciones
-  for (const id of ['posicion', 'regiones', 'relieve', 'agua', 'clima', 'naturaleza', 'direcciones']) {
-    await go('#/leccion/' + id);
-    const n = (await p.$$('.step')).length;
-    ok(n > 0, 'la lección ' + id + ' debe tener pasos');
-    log('lección', id, n, 'pasos');
-  }
-  log(errs.length ? errs.join('\n') : 'sin errores');
+  await go('#/sectores/quito');
+  const nSec = (await p.$$('#slist button')).length;
+  ok(nSec > 20, 'Quito debe tener sectores');
+  await p.type('#q', 'villa'); await sleep(300);
+  const first = await p.$('#slist button');
+  ok(!!first, 'la búsqueda de sector debe encontrar Villaflora');
+  if (first) { await first.click(); await sleep(900); ok(!!(await p.$('.ref.is-active')), 'debe resaltar el marcador'); }
+  console.log('sectores Quito:', nSec);
+
+  await go('#/atlas');
+  ok((await p.evaluate(() => location.hash)) === '#/provincias', 'las rutas antiguas deben redirigir');
+  console.log(errs.length ? errs.join('\n') : 'sin errores');
   await b.close();
 })().catch((e) => { console.error('FALLO', e); process.exit(1); });

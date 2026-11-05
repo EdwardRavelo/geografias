@@ -1,0 +1,20 @@
+[
+  { "id": "quito", "center": [-0.2201, -78.5124], "radius": 0.2 },
+  { "id": "guayaquil", "center": [-2.1962, -79.8862], "radius": 0.16 },
+  { "id": "cuenca", "center": [-2.8953, -78.9963], "radius": 0.08 },
+  { "id": "azogues", "center": [-2.7397, -78.8464], "radius": 0.04 },
+  { "id": "riobamba", "center": [-1.6651, -78.6589], "radius": 0.06 },
+  { "id": "machala", "center": [-3.2581, -79.9554], "radius": 0.06 },
+  { "id": "ambato", "center": [-1.2491, -78.6167], "radius": 0.07 },
+  { "id": "babahoyo", "center": [-1.8022, -79.5344], "radius": 0.05 },
+  { "id": "latacunga", "center": [-0.9352, -78.6155], "radius": 0.05 },
+  { "id": "manta", "center": [-0.9677, -80.7089], "radius": 0.07 },
+  { "id": "loja", "center": [-3.9931, -79.2042], "radius": 0.06 },
+  { "id": "guaranda", "center": [-1.5905, -79.0010], "radius": 0.04 },
+  { "id": "portoviejo", "center": [-1.0546, -80.4545], "radius": 0.06 },
+  { "id": "quevedo", "center": [-1.0225, -79.4604], "radius": 0.06 },
+  { "id": "ibarra", "center": [0.3488, -78.1246], "radius": 0.06 },
+  { "id": "santo-domingo", "center": [-0.2537, -79.1754], "radius": 0.07 },
+  { "id": "duran", "center": [-2.1710, -79.8380], "radius": 0.04 },
+  { "id": "esmeraldas", "center": [0.9592, -79.6540], "radius": 0.06 }
+]

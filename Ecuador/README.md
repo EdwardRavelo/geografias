@@ -1,40 +1,45 @@
-# Atlas de campo · Ecuador
+# Ecuador · Provincia, ciudad y sector
 
-Módulo de consulta y capacitación para ubicar lugares en Ecuador: provincias, cantones con sus cabeceras, ciudades principales con sectores y puntos de referencia, y lecciones breves. Pensado para agentes que reciben direcciones dictadas por teléfono.
+Guía de consulta para ubicar direcciones dictadas por teléfono. Las direcciones se piden siempre en este orden, y el módulo tiene exactamente tres secciones:
+
+1. **Provincia**: las 24 provincias en el mapa, ordenadas por número de casos, con capital, región, ciudades frecuentes y limítrofes.
+2. **Ciudad**: las ciudades más frecuentes (las que superan 10 casos en el reporte), con su provincia, cantón y altitud.
+3. **Sector**: barrios y sectores de cada ciudad ubicados en el mapa, con búsqueda.
+
+La portada (`#/`) es una introducción breve al país: seis datos y cómo se dicta una dirección.
 
 **Abrir:** doble clic en `index.html` (funciona sin conexión) o `node tools/serve.js 5191` y entrar a http://localhost:5191.
 
-## Contenido
-- **Atlas**: 24 provincias con ficha (capital, superficie, población 2022, densidad, cantones, limítrofes). Al acercar el mapa aparecen los **223 cantones**, sus nombres y sus cabeceras; cada cantón tiene su ficha. Búsqueda por provincia, cantón o cabecera.
-- **Cantones**: tabla ordenable con cabecera, altitud y población. Marca los 54 cantones cuya cabecera no se llama igual y los nombres que se repiten (Bolívar, Olmedo, Sucre, San Miguel, Eloy Alfaro…).
-- **Ciudades**: ciudades principales con sectores y referencias (aeropuertos, terminales, hospitales, estadios, centros comerciales, universidades, peajes, lugares emblemáticos) y una guía para orientarse en Quito, Guayaquil y Cuenca.
-- **Lecciones** (7): posición, regiones, relieve, agua, clima, biodiversidad y riesgos, y **ubicar una dirección dictada**.
-- No hay práctica, evaluación ni registro de progreso. No se guardan datos de personas.
+## De dónde sale qué
+- **Qué ciudades y en qué orden:** reporte de asistencias (`transference_*.xlsx`, junio a octubre de 2026, 2 763 casos en Ecuador). Solo se guarda el conteo agregado en `tools/data/frecuencia.json`; el Excel y los datos de personas no se publican.
+- Algunas «ciudades» del reporte son en realidad barrios o parroquias (Belisario Quevedo, Solanda, Bellavista, Lizarzaburu, Ayacucho, Carcelén…). El constructor las suma a su ciudad y las lista como sector.
+- **Sectores:** `tools/sectores-curados.json` lista los sectores que se usan en Quito, Guayaquil y Cuenca; cada uno se ubica con GeoNames y OpenStreetMap (`tools/sectores-manual.json` corrige los que ninguna fuente trae). Las demás ciudades muestran los barrios más cercanos al centro según esas fuentes, y solo aparecen en la sección Sector si hay al menos 5.
 
 ## Límites del módulo
-Es una ayuda de contexto. **No sustituye** el mapa de despacho ni la ubicación en vivo del cliente. Los límites son referenciales y las referencias de ciudades vienen de OpenStreetMap, que puede estar incompleto.
+Es una ayuda de contexto. **No sustituye** el mapa de despacho ni la ubicación en vivo del cliente. Los límites son referenciales y las posiciones de los sectores son aproximadas. El mapa no muestra calles.
 
 ## Estructura
-- `js/content-provincias.js`, `js/content-lecciones.js`, `js/content-ciudades.js`: textos, cifras y guías (aquí se edita el contenido).
-- `js/ec-map.js`: componente de mapa (SVG, zoom, arrastre, teclado, cantones y marcadores).
-- `js/geo-data.js`, `js/cantones-data.js`, `js/ciudades-data.js`: datos generados (no editar a mano).
+- `js/content-provincias.js`: textos y cifras de las 24 provincias.
+- `js/guia-data.js`: frecuencias, ciudades y sectores (generado por `tools/build-guia.js`).
+- `js/ec-map.js`: componente de mapa (SVG, zoom, arrastre, teclado, marcadores).
+- `js/geo-data.js`: geometría de provincias (generado).
+- `js/ec-views.js`, `js/ec-app.js`: pantallas y enrutador.
 - `assets/`: relieve sombreado y tipografías (Instrument Serif, Newsreader, DM Mono; licencia OFL).
 - `tools/`: scripts para regenerar datos y pruebas (`flow.js`, `shot.js`). Requieren `npm install` dentro de `tools/`.
 
 ## Regenerar datos
-`tools/cache/` no se publica. Para regenerar hay que descargar a esa carpeta las fuentes (provincias y cantones de geoBoundaries ADM1/ADM2, `EC.txt` de GeoNames, la tabla de cantones de Wikipedia y las teselas de elevación) y ejecutar:
+`tools/cache/` no se publica. Para actualizar con un reporte nuevo, agregar sus conteos a `tools/data/frecuencia.json` (provincias y pares provincia|ciudad) y ejecutar:
 
 ```bash
-node tools/build-geo.js        # provincias, capitales, vecindad
-node tools/build-cantones.js   # cantones y cabeceras
-node tools/fetch-osm.js        # referencias de ciudades (Overpass; puede tardar)
-node tools/build-ciudades.js   # ciudades, sectores y referencias
-node tools/build-relief.js     # relieve sombreado
+node tools/fetch-sectors.js   # barrios de OpenStreetMap (Overpass; puede tardar por los reintentos)
+node tools/build-guia.js      # frecuencias, ciudades y sectores
+node tools/build-geo.js       # provincias (solo si cambian)
+node tools/build-relief.js    # relieve sombreado (solo si cambia)
 ```
 
+`tools/build-cantones.js` y `js/cantones-data.js` quedan como entrada de `build-guia.js` (cabeceras cantonales); el sitio no los carga.
+
 ## Fuentes
-- Límites de provincias y cantones: geoBoundaries (CC0), referenciales; no sustituyen la cartografía oficial del IGM.
-- Cabeceras cantonales (coordenadas): GeoNames (CC BY 4.0).
-- Cifras provinciales y cantonales: INEC, Censo 2022 (vía Wikipedia). Total vigente: 223 cantones.
-- Sectores y referencias de ciudades: © colaboradores de OpenStreetMap (ODbL).
-- Relieve: teselas Terrarium (SRTM/GEBCO) vía AWS Open Data.
+- Límites de provincias: geoBoundaries (CC0), referenciales; no sustituyen la cartografía oficial del IGM.
+- Cabeceras cantonales y sectores: GeoNames (CC BY 4.0) y © colaboradores de OpenStreetMap (ODbL).
+- Población: INEC, Censo 2022. Relieve: teselas Terrarium (SRTM/GEBCO) vía AWS Open Data.

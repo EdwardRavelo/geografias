@@ -1,12 +1,12 @@
 # Geografías
 
-Módulos de consulta y capacitación sobre la geografía de cada país: mapa interactivo, divisiones administrativas, ciudades con referencias y lecciones.
+Módulos de consulta sobre la geografía de cada país para ubicar direcciones: mapa interactivo con provincia, ciudad y sector.
 
 Cada país vive en su propia carpeta y es independiente (se abre con su `index.html`).
 
 | País | Carpeta | Estado |
 |---|---|---|
-| Ecuador | `Ecuador/` | Atlas con 223 cantones, ciudades y referencias, 7 lecciones |
+| Ecuador | `Ecuador/` | Provincia, ciudad y sector (3 secciones) |
 
 ## Cómo añadir un país
 
@@ -18,7 +18,7 @@ Cada país vive en su propia carpeta y es independiente (se abre con su `index.h
 6. Probar con `node tools/serve.js` y `node tools/flow.js`.
 
 ## Qué se reutiliza tal cual
-`js/ec-map.js` (mapa), `js/ec-util.js`, `js/ec-views.js`, `js/ec-practice.js`, `js/ec-app.js`, `css/app.css` y `assets/fonts/`.
+`js/ec-map.js` (mapa), `js/ec-util.js`, `js/ec-views.js`, `js/ec-app.js`, `css/app.css` y `assets/fonts/`. Las tres secciones (provincia, ciudad, sector) y `tools/build-guia.js` son el molde para otros países.
 
 ## Qué hay que rehacer por país
 Datos geográficos, textos, cifras, preguntas, lecciones y la paleta de regiones. Las cifras deben verificarse con la fuente oficial de cada país.

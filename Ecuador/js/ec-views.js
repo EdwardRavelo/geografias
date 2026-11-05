@@ -1,30 +1,35 @@
-/* Vistas: portada, atlas y lecciones. */
+/* Vistas: inicio y las tres secciones (Provincia → Ciudad → Sector). */
 (function () {
   const EC = (window.EC = window.EC || {});
-  const U = EC.util, el = U.el, G = window.EC_GEO;
+  const U = EC.util, el = U.el, G = window.EC_GEO, GUIA = window.EC_GUIA;
   const V = (EC.views = {});
+  const P = EC.PROVS;
   const norm = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-  const T = (s) => U.tidy(s);
-
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const REGION_ORDER = ['costa', 'sierra', 'amazonia', 'insular'];
+  const CITIES = GUIA.ciudades.slice().sort((a, b) => b.n - a.n);
+  const cityById = (id) => CITIES.find((c) => c.id === id);
+  const provCases = (id) => GUIA.provincias[id] || 0;
+  const pct = (n) => U.num((n / GUIA.total) * 100, n / GUIA.total < 0.1 ? 1 : 0);
   const legendHTML = () => '<div class="map-legend" aria-hidden="true">' + REGION_ORDER.map((r) => `<span><i style="--c:${EC.REGIONS[r].color}"></i>${EC.REGIONS[r].name}</span>`).join('') + '</div>';
+  const mes = (s) => { const [d, m, y] = s.split('-'); return ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'][+m - 1] + ' de ' + y; };
+  const periodo = () => `${mes(GUIA.desde)} a ${mes(GUIA.hasta)}`;
 
-  /* ═════════════ Portada ═════════════ */
-  V.home = function (root, app) {
-    const lessons = EC.LESSONS;
-    const totalMin = lessons.reduce((a, l) => a + l.minutes, 0);
+  /* ═════════════ Inicio ═════════════ */
+  V.home = function (root) {
     const S = EC.STATS;
+    const top4 = Object.entries(GUIA.provincias).sort((a, b) => b[1] - a[1]).slice(0, 4);
+    const top4pct = Math.round((top4.reduce((a, [, n]) => a + n, 0) / GUIA.total) * 100);
     root.innerHTML = `
       <section class="hero">
         <div class="wrap hero-grid">
           <div class="hero-copy">
             <div>
-              <p class="eyebrow rise">Módulo de capacitación · ${lessons.length} lecciones · ≈ ${totalMin} min</p>
+              <p class="eyebrow rise">Guía de consulta para ubicar direcciones</p>
               <h1 class="page-title rise d1" tabindex="-1">Geografía<em>del Ecuador</em></h1>
-              <p class="lede rise d2">Del Pacífico a la selva, pasando por la cordillera. Un mapa interactivo para ubicar provincias, cantones y ciudades, con sus cabeceras y puntos de referencia, y lecciones para interpretar una dirección dictada.</p>
+              <p class="lede rise d2">Las direcciones llegan por teléfono en este orden: <b>provincia, ciudad y sector</b>. Aquí están las tres, en un mapa, con las ciudades que más se piden.</p>
               <div class="hero-actions rise d3">
-                <a class="btn arrow" href="#/atlas">Abrir el atlas</a>
-                <a class="btn ghost" href="#/ciudades">Ciudades y referencias</a>
+                <a class="btn arrow" href="#/provincias">Empezar por la provincia</a>
               </div>
             </div>
             <div class="hero-meta rise d4">
@@ -37,26 +42,22 @@
           <div class="hero-map rise d2"><div class="caption" id="heroCaption">Pasa el cursor por el mapa</div><div id="heroMap" style="height:100%"></div></div>
         </div>
       </section>
-      <div class="eq-divider" role="presentation"><span>0° 0′ 0″ · línea equinoccial</span></div>
 
       <section class="section" id="ficha">
         <div class="wrap">
           <div class="section-head">
-            <h2>El país en una página</h2>
-            <p>Nueve datos que conviene tener presentes antes de entrar en detalle. Se amplían a lo largo de las lecciones.</p>
+            <h2>El país en seis datos</h2>
+            <p>Lo mínimo para ubicarse. El detalle de cada provincia está en la primera sección.</p>
           </div>
           <dl class="fact-list">
             ${[
-              ['Superficie', '≈ 256 000 km²', 'Incluye Galápagos (8 010 km²)'],
-              ['Población', U.num(S.total.pop / 1e6, 2) + ' millones', 'Censo 2022, INEC'],
-              ['Latitud', '1° 27′ N a 5° 01′ S', 'La línea equinoccial cruza cinco provincias'],
-              ['Longitud', '75° 11′ a 81° 01′ O', 'Galápagos: entre 89° y 92° O'],
-              ['Punto más alto', 'Chimborazo, 6 263 m', 'El más lejano al centro de la Tierra'],
-              ['Capital', 'Quito, 2 850 m', 'Segunda ciudad más poblada tras Guayaquil'],
-              ['División', '24 provincias', `${S.total.cantones} cantones, cada uno con su cabecera`],
-              ['Regiones', 'Cuatro', 'Costa, Sierra, Amazonía e Insular'],
+              ['Población', U.num(S.total.pop / 1e6, 1) + ' millones', 'Censo 2022, INEC'],
+              ['División', '24 provincias', 'Cada provincia se divide en cantones; cada cantón tiene una ciudad cabecera'],
+              ['Regiones', 'Cuatro', 'Costa, Sierra, Amazonía e Insular (Galápagos)'],
+              ['Capital', 'Quito', 'En la Sierra, a 2 850 m de altura'],
+              ['Ciudad más poblada', 'Guayaquil', 'En la Costa; es el puerto principal'],
               ['Hora', 'UTC−5', 'En Galápagos, UTC−6'],
-            ].map(([k, v, s]) => `<div class="fact"><dt>${k}</dt><dd>${T(v)}<small>${T(s)}</small></dd></div>`).join('')}
+            ].map(([k, v, s]) => `<div class="fact"><dt>${k}</dt><dd>${v}<small>${s}</small></dd></div>`).join('')}
           </dl>
         </div>
       </section>
@@ -64,273 +65,224 @@
       <section class="section" id="ruta">
         <div class="wrap">
           <div class="section-head">
-            <h2>Ruta de aprendizaje</h2>
-            <p>Lecciones breves que combinan texto y mapa: mientras lees, el mapa se acerca y resalta las provincias de cada paso. Sirven también como consulta.</p>
+            <h2>Cómo se dicta una dirección</h2>
+            <p>Siempre de lo general a lo particular. Si el cliente salta un paso, se le pregunta en este mismo orden.</p>
           </div>
           <ol class="route">
-            ${lessons.map((l) => `<li><span class="num">${String(l.n).padStart(2, '0')}</span>
-                <div><h3><a href="#/leccion/${l.id}">${l.title}</a></h3><p>${l.blurb}</p></div>
-                <div class="meta"><span>${l.minutes} min</span></div></li>`).join('')}
+            <li><span class="num">01</span><div><h3><a href="#/provincias">Provincia</a></h3><p>Las 24 provincias en el mapa, con su capital y las ciudades que más se piden. ${top4.map(([id]) => P[id].name).join(', ')} concentran el ${top4pct} % de los casos.</p></div><div class="meta"><span>24</span></div></li>
+            <li><span class="num">02</span><div><h3><a href="#/ciudades">Ciudad</a></h3><p>Las ${CITIES.length} ciudades más frecuentes, ordenadas por número de casos, con su provincia y su cantón.</p></div><div class="meta"><span>${CITIES.length}</span></div></li>
+            <li><span class="num">03</span><div><h3><a href="#/sectores">Sector</a></h3><p>Barrios y sectores de cada ciudad ubicados en el mapa, para quienes dictan «por la Villaflora» o «cerca de la Kennedy».</p></div><div class="meta"><span>${CITIES.filter((c) => c.sectores.length).length} ciudades</span></div></li>
           </ol>
-          <div class="extras">
-            <div class="extra"><h3>Atlas</h3><p>Las 24 provincias con su ficha y, al acercar el mapa, los cantones con sus cabeceras. Capas de relieve, regiones, nombres y capitales.</p><a class="btn ghost sm arrow" href="#/atlas">Abrir el atlas</a></div>
-            <div class="extra"><h3>Cantones y cabeceras</h3><p>Tabla de los 223 cantones con búsqueda: cabecera, altitud y población. Marca los casos en que la cabecera no se llama igual que el cantón y los nombres que se repiten.</p><a class="btn ghost sm arrow" href="#/cantones">Ver cantones</a></div>
-            <div class="extra"><h3>Ciudades y referencias</h3><p>Las ciudades principales con sus sectores y puntos de referencia (terminales, aeropuertos, hospitales, estadios, centros comerciales) y una guía para orientarse.</p><a class="btn ghost sm arrow" href="#/ciudades">Ver ciudades</a></div>
-          </div>
+          <p class="foot-note" style="margin-top:var(--s5)">Las ciudades y su orden salen del reporte de asistencias de ${periodo()} (${U.num(GUIA.total)} casos). Es una ayuda de contexto: la dirección exacta se confirma siempre con el mapa de despacho o la ubicación que comparte el cliente.</p>
         </div>
       </section>
 
       <section class="credits">
         <div class="wrap cols">
-          <div><h4>Datos geográficos</h4><p>Límites de provincias y cantones: geoBoundaries (CC0), de precisión referencial; no sustituyen la cartografía oficial del IGM. Cabeceras: GeoNames (CC BY 4.0). Sectores y referencias de ciudades: © colaboradores de OpenStreetMap (ODbL).</p></div>
-          <div><h4>Relieve</h4><p>Sombreado calculado a partir del modelo digital de elevación de teselas Terrarium (SRTM y GEBCO, vía AWS Open Data).</p></div>
-          <div><h4>Cifras</h4><p>Superficie, población (Censo 2022) y cantones por provincia, a partir de INEC. Alturas de cumbres y capitales, redondeadas y referenciales. Últimas revisiones: noviembre de 2026.</p></div>
+          <div><h4>Mapas</h4><p>Límites de provincias: geoBoundaries (CC0), referenciales; no sustituyen la cartografía oficial del IGM. Relieve calculado con teselas Terrarium (SRTM y GEBCO, vía AWS Open Data).</p></div>
+          <div><h4>Ciudades y sectores</h4><p>Ubicaciones: GeoNames (CC BY 4.0) y © colaboradores de OpenStreetMap (ODbL). Pueden faltar sectores o tener posiciones aproximadas.</p></div>
+          <div><h4>Cifras</h4><p>Población: INEC, Censo 2022. Casos: conteo agregado del reporte de asistencias, sin datos de personas.</p></div>
         </div>
       </section>`;
-
     const map = new EC.AtlasMap(root.querySelector('#heroMap'), { wheel: 'ctrl', touchPan: false, controls: false, label: 'Mapa de las regiones del Ecuador' });
     map.setScene({ focus: 'all', tint: 0.62, labels: 'provinces', places: 'capitals' }, { animate: false });
-    map.view.insertAdjacentHTML('beforeend', '');
     const cap = root.querySelector('#heroCaption');
-    map.on('hover', (id) => { cap.textContent = id ? `${EC.PROVS[id].name} · ${EC.REGIONS[EC.PROVS[id].region].name}` : 'Pasa el cursor por el mapa'; });
-    map.on('select', (id) => { if (id) location.hash = '#/atlas/' + id; });
+    map.on('hover', (id) => { cap.textContent = id ? `${P[id].name} · ${EC.REGIONS[P[id].region].name}` : 'Pasa el cursor por el mapa'; });
+    map.on('select', (id) => { if (id) location.hash = '#/provincias/' + id; });
     return { destroy: () => map.destroy() };
   };
 
-  /* ═════════════ Atlas ═════════════ */
-  V.atlas = function (root, app, param) {
-    const P = EC.PROVS;
+  /* ═════════════ 1 · Provincia ═════════════ */
+  V.provincias = function (root, app, param) {
     root.innerHTML = `
-      <h1 class="sr-only page-title" tabindex="-1">Atlas de las provincias del Ecuador</h1>
+      <h1 class="sr-only page-title" tabindex="-1">Provincias del Ecuador</h1>
       <div class="atlas" id="atlas">
-        <aside class="atlas-side" aria-label="Provincias y capas">
-          <div class="side-block"><h2>Buscar</h2><input class="search" type="search" id="q" placeholder="Provincia, cantón o ciudad…" aria-label="Buscar provincia, cantón o cabecera" autocomplete="off"></div>
-          <div class="side-block"><h2>Capas</h2><div class="layers" id="layers"></div></div>
-          <div class="side-block" style="border-bottom:none"><h2>Provincias <span id="count" class="mono" style="color:var(--muted)"></span></h2><ul class="plist" id="plist"></ul></div>
+        <aside class="atlas-side" aria-label="Provincias">
+          <div class="side-block"><p class="step-tag">1 · Provincia</p><input class="search" type="search" id="q" placeholder="Buscar provincia o capital…" aria-label="Buscar provincia o capital" autocomplete="off"></div>
+          <div class="side-block" style="border-bottom:none"><h2>Por número de casos <span id="count" class="mono" style="color:var(--muted)"></span></h2><ul class="plist" id="plist"></ul></div>
         </aside>
-        <div class="atlas-stage" id="stage">
-          <div class="stage-map"><div id="map" style="height:100%"></div></div>
-        </div>
+        <div class="atlas-stage"><div class="stage-map"><div id="map" style="height:100%"></div></div></div>
         <aside class="detail" id="detail" aria-label="Ficha de la provincia" aria-live="polite"></aside>
       </div>`;
-    const A = root.querySelector('#atlas'), detail = root.querySelector('#detail');
+    const A = root.querySelector('#atlas'), detail = root.querySelector('#detail'), plist = root.querySelector('#plist'), q = root.querySelector('#q'), count = root.querySelector('#count');
     const map = new EC.AtlasMap(root.querySelector('#map'));
-    map.setScene({ focus: 'all', tint: 0.5, labels: 'provinces', places: 'capitals', equator: true, cantones: true }, { animate: false });
+    map.setScene({ focus: 'all', tint: 0.5, labels: 'provinces', places: 'capitals', equator: false, cantones: false }, { animate: false });
     map.view.insertAdjacentHTML('beforeend', legendHTML());
-    const hint = el('div', { class: 'map-hint' }, 'Acerca el mapa para ver los cantones');
-    map.view.append(hint);
-    map.on('view', () => hint.classList.toggle('is-off', map.ppu >= 0.3 || !map.layer('cantones')));
-    let cantons = null;
-    U.loadScript('js/cantones-data.js').then(() => { cantons = window.EC_CANTONES; map.setCantons(cantons); buildList(norm(q.value.trim())); if (pendingCanton) { map.selectCanton(pendingCanton, { fly: true }); pendingCanton = null; } }).catch(() => hint.remove());
-    let pendingCanton = null;
-
-    // Capas
-    const LAYERS = [
-      ['relief', 'Relieve sombreado', true], ['regions', 'Colores por región', true], ['labels', 'Nombres de provincias', true],
-      ['places', 'Capitales provinciales', true], ['cantones', 'Cantones y cabeceras', true], ['equator', 'Línea equinoccial', true], ['graticule', 'Cuadrícula', true],
-    ];
-    const lay = root.querySelector('#layers');
-    for (const [k, label, on] of LAYERS) {
-      const id = 'ly-' + k;
-      const row = el('label', { class: 'layer-row', for: id }, [el('input', { type: 'checkbox', id, checked: on }), label]);
-      row.querySelector('input').addEventListener('change', (e) => {
-        const v = e.target.checked;
-        map.setLayer(k, k === 'labels' ? (v ? 'provinces' : false) : k === 'places' ? (v ? 'capitals' : false) : v);
-      });
-      lay.append(row);
-    }
-
-    // Lista de provincias
-    const plist = root.querySelector('#plist'), q = root.querySelector('#q'), count = root.querySelector('#count');
     const buttons = {};
+    const order = EC.PROV_IDS.slice().sort((a, b) => provCases(b) - provCases(a) || P[a].name.localeCompare(P[b].name, 'es'));
     function buildList(filter = '') {
       plist.innerHTML = ''; let n = 0;
-      for (const r of REGION_ORDER) {
-        const ids = EC.PROV_IDS.filter((id) => P[id].region === r && (!filter || norm(P[id].name + ' ' + P[id].capital).includes(filter)));
-        if (!ids.length) continue;
-        plist.append(el('li', { class: 'grp', style: `--c:${EC.REGIONS[r].color}` }, EC.REGIONS[r].name));
-        for (const id of ids) {
-          n++;
-          const b = el('button', { type: 'button', 'data-id': id, 'aria-current': map.selected === id ? 'true' : 'false' }, [P[id].name, el('small', null, P[id].capital.replace(/ \(.*\)/, ''))]);
-          b.addEventListener('click', () => map.select(id, { fly: true }));
-          b.addEventListener('pointerenter', () => map.setHover(id));
-          b.addEventListener('pointerleave', () => map.setHover(null));
-          buttons[id] = b;
-          plist.append(el('li', null, b));
-        }
-      }
-      if (filter && filter.length >= 2 && cantons) {
-        const hits = cantons.filter((c) => norm(c.name + ' ' + c.seat).includes(filter)).slice(0, 18);
-        if (hits.length) {
-          plist.append(el('li', { class: 'grp grp-c' }, 'Cantones y cabeceras'));
-          for (const c of hits) {
-            const b = el('button', { type: 'button', 'data-cid': c.id }, [c.name, el('small', null, P[c.prov].name)]);
-            b.addEventListener('click', () => map.selectCanton(c.id, { fly: true }));
-            plist.append(el('li', null, b));
-          }
-        }
+      for (const id of order) {
+        if (filter && !norm(P[id].name + ' ' + P[id].capital).includes(filter)) continue;
+        n++;
+        const c = provCases(id);
+        const b = el('button', { type: 'button', 'data-id': id, 'aria-current': map.selected === id ? 'true' : 'false' }, [P[id].name, el('small', null, c ? U.num(c) : '—')]);
+        b.addEventListener('click', () => map.select(id, { fly: true }));
+        b.addEventListener('pointerenter', () => map.setHover(id));
+        b.addEventListener('pointerleave', () => map.setHover(null));
+        buttons[id] = b; plist.append(el('li', null, b));
       }
       count.textContent = `(${n})`;
     }
     buildList();
     q.addEventListener('input', () => buildList(norm(q.value.trim())));
 
-    // Ficha de provincia
-    const neighborName = (id) => P[id].name;
     function showDetail(id) {
       A.classList.toggle('has-detail', !!id);
       if (!id) { detail.innerHTML = ''; return; }
-      const p = P[id], reg = EC.REGIONS[p.region];
-      const maxPop = Math.max(...Object.values(P).map((x) => x.pop));
-      const adj = (G.adjacency[id] || []).sort((a, b) => P[a].name.localeCompare(P[b].name, 'es'));
+      const p = P[id], reg = EC.REGIONS[p.region], c = provCases(id);
+      const adj = (G.adjacency[id] || []).slice().sort((a, b) => P[a].name.localeCompare(P[b].name, 'es'));
       const ext = [];
       (G.borders[id] || []).forEach((b) => ext.push(b === 'colombia' ? 'Colombia' : 'Perú'));
       if (EC.SETS.coast.includes(id) || id === 'galapagos') ext.push('Océano Pacífico');
+      const cities = CITIES.filter((x) => x.prov === id);
       detail.innerHTML = `
         <button class="close" type="button" aria-label="Cerrar ficha">×</button>
         <span class="chip region-chip"><i class="dot" style="--c:${reg.color}"></i>${reg.name} · ${reg.alt}</span>
         <h2 tabindex="-1">${p.name}</h2>
         <dl class="grid">
           <div><dt>Capital</dt><dd>${p.capital.replace(/ \(.*\)/, '')}<br><small>${U.num(p.capitalAlt)} m s. n. m.</small></dd></div>
-          <div><dt>Superficie</dt><dd>${U.num(p.area)} <small>km²</small></dd></div>
-          <div><dt>Población</dt><dd>${U.num(p.pop)}<br><small>Censo 2022</small></dd></div>
-          <div><dt>Densidad</dt><dd>${U.num(p.dens, 1)} <small>hab/km²</small></dd></div>
-          <div><dt>Cantones</dt><dd>${p.cantones}<br><small>divisiones de la provincia</small></dd></div>
-          <div><dt>% del país</dt><dd>${U.num((p.pop / EC.STATS.total.pop) * 100, 1)} <small>% de la población</small></dd></div>
+          <div><dt>Casos reportados</dt><dd>${c ? U.num(c) : 'Ninguno'}<br><small>${c ? pct(c) + ' % del total' : 'en el período'}</small></dd></div>
         </dl>
-        <div class="poprow"><span>Población relativa a Guayas</span><span class="track"><i style="width:${(p.pop / maxPop) * 100}%"></i></span></div>
-        <p style="margin-top:1.1rem">${T(p.resumen)}</p>
-        <h3>Para recordar</h3>
-        <ul class="claves">${p.claves.map((c) => `<li>${T(c)}</li>`).join('')}</ul>
+        <p style="margin-top:1.1rem">${U.tidy(p.resumen)}</p>
+        <h3>Ciudades más frecuentes</h3>
+        ${cities.length ? `<ul class="reflist">${cities.map((x) => `<li><a class="rowlink" href="#/ciudades/${x.id}"><span>${esc(x.name)}</span><small>${U.num(x.n)} casos</small></a></li>`).join('')}</ul>` : '<p class="note-warn">Esta provincia no tiene ciudades entre las más frecuentes. Si llega un caso, se ubica con el mapa de despacho.</p>'}
         <h3>Limita con</h3>
-        <div class="neigh">${adj.map((a) => `<button class="chip" type="button" data-go="${a}">${neighborName(a)}</button>`).join('')}${ext.map((e) => `<span class="chip ext">${e}</span>`).join('')}</div>`;
+        <div class="neigh">${adj.map((a) => `<button class="chip" type="button" data-go="${a}">${P[a].name}</button>`).join('')}${ext.map((e) => `<span class="chip ext">${e}</span>`).join('')}</div>`;
       detail.querySelector('.close').onclick = () => map.select(null);
       detail.querySelectorAll('[data-go]').forEach((b) => (b.onclick = () => map.select(b.dataset.go, { fly: true })));
       detail.scrollTop = 0;
     }
-
-    function showCanton(id) {
-      const c = cantons && cantons.find((x) => x.id === id);
-      A.classList.toggle('has-detail', !!c);
-      if (!c) { detail.innerHTML = ''; return; }
-      const p = P[c.prov], reg = EC.REGIONS[p.region];
-      const siblings = cantons.filter((x) => x.prov === c.prov && x.id !== c.id).sort((a, b) => a.name.localeCompare(b.name, 'es'));
-      const dens = c.pop && c.area ? c.pop / c.area : null;
-      const notes = [];
-      if (c.noPoly) notes.push('Cantón de creación reciente: su límite todavía no está dibujado en este mapa; aparece dentro del cantón de origen.');
-      if (!c.geoSeat) notes.push('La ubicación de la cabecera es aproximada (centro del cantón). Verifíquela en el mapa de despacho.');
-      detail.innerHTML = `
-        <button class="close" type="button" aria-label="Cerrar ficha">×</button>
-        <span class="chip region-chip"><i class="dot" style="--c:${reg.color}"></i>${reg.name} · ${p.name}</span>
-        <p class="eyebrow" style="margin:1rem 0 0">Cantón</p>
-        <h2 tabindex="-1" style="margin-top:.2rem">${c.name}</h2>
-        <dl class="grid">
-          <div><dt>Cabecera cantonal</dt><dd>${c.seat}${c.alt != null ? '<br><small>≈ ' + U.num(c.alt) + ' m s. n. m.</small>' : ''}</dd></div>
-          <div><dt>Provincia</dt><dd><button class="term" type="button" data-prov="${p.id}" style="font-size:inherit">${p.name}</button></dd></div>
-          <div><dt>Población del cantón</dt><dd>${c.pop ? U.num(c.pop) : '—'}<br><small>Censo 2022</small></dd></div>
-          <div><dt>Población de la cabecera</dt><dd>${c.seatPop ? U.num(c.seatPop) : '—'}</dd></div>
-          <div><dt>Superficie</dt><dd>${c.area ? U.num(c.area, c.area < 100 ? 1 : 0) : '—'} <small>km²</small></dd></div>
-          <div><dt>Densidad</dt><dd>${dens ? U.num(dens, 1) : '—'} <small>hab/km²</small></dd></div>
-        </dl>
-        ${c.lat != null ? `<p class="coords">Cabecera: ${U.dms(c.lat, 'lat')} · ${U.dms(c.lon, 'lon')}${c.geoSeat ? '' : ' (aprox.)'}</p>` : ''}
-        ${c.year ? `<p style="color:var(--muted);margin:.4rem 0 0">Cantonizado en ${c.year}.</p>` : ''}
-        ${notes.map((n) => `<p class="note-warn">${n}</p>`).join('')}
-        <h3>Otros cantones de ${p.name} (${siblings.length})</h3>
-        <div class="neigh">${siblings.map((s) => `<button class="chip" type="button" data-c="${s.id}">${s.name}</button>`).join('')}</div>`;
-      detail.querySelector('.close').onclick = () => { map.selectCanton(null); A.classList.remove('has-detail'); };
-      detail.querySelectorAll('[data-c]').forEach((b) => (b.onclick = () => map.selectCanton(b.dataset.c, { fly: true })));
-      detail.querySelector('[data-prov]').onclick = () => map.select(p.id, { fly: true });
-      detail.scrollTop = 0;
-    }
-    map.on('selectCanton', (id) => { if (id) { showCanton(id); history.replaceState(null, '', '#/atlas'); } });
-
     map.on('select', (id) => {
       showDetail(id);
       Object.entries(buttons).forEach(([k, b]) => b.setAttribute('aria-current', k === id ? 'true' : 'false'));
       if (id && buttons[id]) buttons[id].scrollIntoView({ block: 'nearest' });
-      if (id) history.replaceState(null, '', '#/atlas/' + id); else history.replaceState(null, '', '#/atlas');
+      history.replaceState(null, '', id ? '#/provincias/' + id : '#/provincias');
     });
     map.on('hover', (id) => Object.entries(buttons).forEach(([k, b]) => b.classList.toggle('is-hover', k === id)));
-
     if (param && P[param]) setTimeout(() => map.select(param, { fly: true }), 60);
-    else if (param) pendingCanton = param;
     return { destroy: () => map.destroy() };
   };
 
-  /* ═════════════ Lecciones ═════════════ */
-  V.lesson = function (root, app, id) {
-    const L = EC.LESSONS.find((l) => l.id === id);
-    if (!L) { root.innerHTML = '<div class="wrap" style="padding-block:4rem"><h1>Lección no encontrada</h1><p><a href="#/">Volver al inicio</a></p></div>'; return {}; }
-    const idx = EC.LESSONS.indexOf(L), prev = EC.LESSONS[idx - 1], nextL = EC.LESSONS[idx + 1];
+  /* ═════════════ 2 · Ciudad ═════════════ */
+  V.ciudades = function (root, app, param) {
     root.innerHTML = `
-      <header class="lesson-head"><div class="wrap">
-        <div class="crumbs eyebrow"><a href="#/">Inicio</a><span>/</span><span>Lección ${L.n} de ${EC.LESSONS.length}</span><span>/</span><span>≈ ${L.minutes} min</span></div>
-        <div class="row"><h1 class="page-title" tabindex="-1">${L.title}</h1><p>${L.blurb}</p></div>
-      </div></header>
-      <div class="wrap lesson-grid">
-        <div class="steps" id="steps">
-          ${L.steps.map((s, i) => `<section class="step" data-i="${i}" aria-labelledby="st${i}">
-            <div class="kicker"><span class="sn">${L.n}.${i + 1}</span><span>${T(s.kicker)}</span></div>
-            <h2 id="st${i}">${T(s.title)}</h2>
-            <div class="body">${T(s.body)}</div>
-            ${s.aside ? `<aside class="aside-note"><b>${s.aside[0]}</b>${T(s.aside[1])}</aside>` : ''}
-          </section>`).join('')}
-          <nav class="lesson-nav" aria-label="Navegación entre lecciones">
-            ${prev ? `<a class="btn ghost sm" href="#/leccion/${prev.id}">← ${prev.title}</a>` : '<span></span>'}
-            ${nextL ? `<a class="btn arrow" href="#/leccion/${nextL.id}">Lección ${nextL.n}</a>` : '<a class="btn arrow" href="#/ciudades">Ciudades y referencias</a>'}
-          </nav>
-        </div>
-        <div class="stage" aria-label="Mapa de la lección">
-          <div class="stage-map"><div id="map" style="height:100%"></div></div>
-          <div class="stage-aux" id="aux"></div>
-        </div>
+      <h1 class="sr-only page-title" tabindex="-1">Ciudades más frecuentes</h1>
+      <div class="atlas has-detail cities" id="cities">
+        <aside class="atlas-side" aria-label="Ciudades">
+          <div class="side-block"><p class="step-tag">2 · Ciudad</p><input class="search" type="search" id="q" placeholder="Buscar ciudad…" aria-label="Buscar ciudad" autocomplete="off"></div>
+          <div class="side-block" style="border-bottom:none"><h2>Por número de casos <span id="count" class="mono" style="color:var(--muted)"></span></h2><ul class="plist" id="clist"></ul></div>
+        </aside>
+        <div class="atlas-stage"><div class="stage-map"><div id="map" style="height:100%"></div></div></div>
+        <aside class="detail" id="detail" aria-label="Ficha de la ciudad" aria-live="polite"></aside>
       </div>`;
-
-    const map = new EC.AtlasMap(root.querySelector('#map'), { wheel: 'ctrl', touchPan: false, label: `Mapa de la lección ${L.n}` });
-    map.view.insertAdjacentHTML('beforeend', legendHTML());
-    const legend = map.view.querySelector('.map-legend');
-    U.loadScript('js/cantones-data.js').then(() => map.setCantons(window.EC_CANTONES)).catch(() => {});
-    const aux = root.querySelector('#aux');
-    let auxKind = null;
-
-    function applyStep(i) {
-      const s = L.steps[i].scene;
-      const wantAux = s.aux ? 'chart' : null;
-      map.clearOverrides();
-      map.setScene(s, { animate: true });
-      const sc = map.scene;
-      legend.hidden = !(sc.regions !== false && (sc.tint == null || sc.tint >= 0.3) && sc.relief !== false);
-      if (wantAux !== auxKind) {
-        auxKind = wantAux;
-        aux.classList.toggle('on', !!wantAux);
-        aux.innerHTML = '';
-        if (wantAux) EC.regionChart(aux);
-        setTimeout(() => { map.measure(); map.resetView(); }, 480);
+    const detail = root.querySelector('#detail'), clist = root.querySelector('#clist'), q = root.querySelector('#q'), count = root.querySelector('#count');
+    const map = new EC.AtlasMap(root.querySelector('#map'), { label: 'Mapa de ciudades frecuentes' });
+    const SCENE = { tint: 0.5, labels: 'provinces', places: false, equator: false, cantones: false, regions: true };
+    map.setScene({ ...SCENE, focus: 'all' }, { animate: false });
+    map.setMarkers(CITIES.map((c) => ({ id: c.id, x: c.x, y: c.y, type: 'ciudad', glyph: '', typeName: 'Ciudad', label: c.name, note: P[c.prov].name })));
+    const buttons = {};
+    let city = null;
+    function buildList(filter = '') {
+      clist.innerHTML = ''; let n = 0;
+      for (const c of CITIES) {
+        if (filter && !norm(c.name + ' ' + P[c.prov].name).includes(filter)) continue;
+        n++;
+        const b = el('button', { type: 'button', 'data-id': c.id, 'aria-current': city && city.id === c.id ? 'true' : 'false' }, [el('span', null, [c.name, el('em', { class: 'sub' }, P[c.prov].name)]), el('small', null, U.num(c.n))]);
+        b.addEventListener('click', () => pick(c.id));
+        buttons[c.id] = b; clist.append(el('li', null, b));
       }
+      count.textContent = `(${n})`;
     }
+    buildList();
+    q.addEventListener('input', () => buildList(norm(q.value.trim())));
 
-    // Paso activo según el scroll
-    const steps = [...root.querySelectorAll('.step')];
-    let current = -1;
-    const activate = (i) => {
-      if (i === current) return;
-      current = i;
-      steps.forEach((el_, k) => el_.classList.toggle('is-active', k === i));
-      applyStep(i);
-    };
-    const io = new IntersectionObserver((ents) => {
-      ents.forEach((e) => { if (e.isIntersecting) activate(+e.target.dataset.i); });
-    }, { rootMargin: '-38% 0px -52% 0px', threshold: 0 });
-    steps.forEach((s) => io.observe(s));
-    activate(0);
+    function render() {
+      const c = city, p = P[c.prov], reg = EC.REGIONS[p.region];
+      const alt = norm(p.capital).includes(norm(c.name)) ? p.capitalAlt : c.alt;
+      const same = CITIES.filter((x) => x.prov === c.prov && x.id !== c.id);
+      detail.innerHTML = `
+        <span class="chip region-chip"><i class="dot" style="--c:${reg.color}"></i>${reg.name}</span>
+        <p class="eyebrow" style="margin:1rem 0 0">Provincia · <a href="#/provincias/${p.id}">${p.name}</a></p>
+        <h2 tabindex="-1" style="margin-top:.2rem">${esc(c.name)}</h2>
+        <dl class="grid">
+          <div><dt>Provincia</dt><dd><a href="#/provincias/${p.id}">${p.name}</a></dd></div>
+          <div><dt>Cantón</dt><dd>${esc(c.canton)}</dd></div>
+          <div><dt>Altitud</dt><dd>${alt != null ? '≈ ' + U.num(alt) + ' <small>m</small>' : '—'}</dd></div>
+          <div><dt>Casos reportados</dt><dd>${U.num(c.n)}<br><small>${pct(c.n)} % del total</small></dd></div>
+        </dl>
+        ${c.sectores.length ? `<a class="btn arrow" href="#/sectores/${c.id}" style="margin-top:1.2rem">Ver sus ${c.sectores.length} sectores</a>` : '<p class="note-warn">Aún no hay sectores cargados para esta ciudad. Se ubica con el mapa de despacho.</p>'}
+        ${same.length ? `<h3>Otras ciudades de ${p.name}</h3><div class="neigh">${same.map((x) => `<button class="chip" type="button" data-c="${x.id}">${esc(x.name)}</button>`).join('')}</div>` : ''}
+        <p class="note-warn">Ubicación de la cabecera cantonal. Úsela para orientarse; confirme la dirección con el mapa de despacho.</p>`;
+      detail.querySelectorAll('[data-c]').forEach((b) => (b.onclick = () => pick(b.dataset.c)));
+      detail.scrollTop = 0;
+    }
+    function pick(id, animate = true) {
+      const c = cityById(id); if (!c) return;
+      city = c;
+      Object.entries(buttons).forEach(([k, b]) => b.setAttribute('aria-current', k === id ? 'true' : 'false'));
+      if (buttons[id]) buttons[id].scrollIntoView({ block: 'nearest' });
+      map.markActive(id);
+      map.setScene({ ...SCENE, focus: { box: [c.lon - 0.5, c.lat - 0.42, c.lon + 0.5, c.lat + 0.42] } }, { animate });
+      render();
+      history.replaceState(null, '', '#/ciudades/' + id);
+    }
+    map.on('marker', (id) => pick(id));
+    pick(param && cityById(param) ? param : CITIES[0].id, false);
+    return { destroy: () => map.destroy() };
+  };
 
-    // Términos interactivos
-    root.querySelector('#steps').addEventListener('click', (e) => {
-      const t = e.target.closest('.term'); if (!t) return;
-      if (t.dataset.prov) { map.flyTo({ provinces: [t.dataset.prov] }, 800); map.flash(t.dataset.prov); }
-      document.querySelector('.stage').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    });
-
-    return { destroy: () => { io.disconnect(); map.destroy(); } };
+  /* ═════════════ 3 · Sector ═════════════ */
+  V.sectores = function (root, app, param) {
+    const WITH = CITIES.filter((c) => c.sectores.length);
+    root.innerHTML = `
+      <h1 class="sr-only page-title" tabindex="-1">Sectores de cada ciudad</h1>
+      <div class="atlas sectors" id="sectors">
+        <aside class="atlas-side" aria-label="Sectores">
+          <div class="side-block"><p class="step-tag">3 · Sector</p><label class="lbl" for="city">Ciudad</label><select class="search" id="city">${WITH.map((c) => `<option value="${c.id}">${esc(c.name)} · ${P[c.prov].name}</option>`).join('')}</select></div>
+          <div class="side-block"><input class="search" type="search" id="q" placeholder="Buscar sector…" aria-label="Buscar sector" autocomplete="off"></div>
+          <div class="side-block" style="border-bottom:none"><h2 id="shead">Sectores <span id="count" class="mono" style="color:var(--muted)"></span></h2><ul class="plist" id="slist"></ul><p class="foot-note" id="snote"></p></div>
+        </aside>
+        <div class="atlas-stage"><div class="stage-map"><div id="map" style="height:100%"></div></div></div>
+      </div>`;
+    const sel = root.querySelector('#city'), q = root.querySelector('#q'), slist = root.querySelector('#slist'), count = root.querySelector('#count'), snote = root.querySelector('#snote');
+    const map = new EC.AtlasMap(root.querySelector('#map'), { label: 'Mapa de los sectores de la ciudad' });
+    const SCENE = { tint: 0.4, labels: false, places: false, equator: false, cantones: false, regions: true };
+    map.setScene({ ...SCENE, focus: 'all' }, { animate: false });
+    let city = null;
+    const buttons = {};
+    function buildList() {
+      const filter = norm(q.value.trim());
+      slist.innerHTML = ''; let n = 0;
+      for (const s of city.sectores.slice().sort((a, b) => a.name.localeCompare(b.name, 'es'))) {
+        if (filter && !norm(s.name).includes(filter)) continue;
+        n++;
+        const b = el('button', { type: 'button', 'data-s': s.name }, [s.name, el('small', null, s.n ? U.num(s.n) + (s.n === 1 ? ' caso' : ' casos') : '')]);
+        b.addEventListener('click', () => focus(s.name));
+        buttons[s.name] = b; slist.append(el('li', null, b));
+      }
+      count.textContent = `(${n})`;
+      if (!n) slist.append(el('li', { class: 'empty' }, 'Ningún sector con ese nombre.'));
+    }
+    function focus(name) {
+      const s = city.sectores.find((x) => x.name === name); if (!s) return;
+      map.markActive(city.id + '|' + name);
+      map.flyTo(map.fit({ x: s.x - 9, y: s.y - 9, w: 18, h: 18 }, 0), 700);
+      Object.entries(buttons).forEach(([k, b]) => b.setAttribute('aria-current', k === name ? 'true' : 'false'));
+    }
+    function pick(id, animate = true) {
+      const c = cityById(id) && cityById(id).sectores.length ? cityById(id) : WITH[0];
+      city = c; sel.value = c.id; q.value = '';
+      map.setMarkers(c.sectores.map((s) => ({ id: c.id + '|' + s.name, x: s.x, y: s.y, type: 'sector', glyph: '', typeName: 'Sector', label: s.name, note: '' })));
+      map.setScene({ ...SCENE, focus: { box: c.view } }, { animate });
+      buildList();
+      snote.textContent = `${c.name}, ${P[c.prov].name}. Posiciones aproximadas (GeoNames y OpenStreetMap): sirven para orientarse, no para despachar.`;
+      history.replaceState(null, '', '#/sectores/' + c.id);
+    }
+    sel.addEventListener('change', () => pick(sel.value));
+    q.addEventListener('input', buildList);
+    map.on('marker', (id) => { const name = id.split('|').slice(1).join('|'); focus(name); if (buttons[name]) buttons[name].scrollIntoView({ block: 'nearest' }); });
+    pick(param, false);
+    return { destroy: () => map.destroy() };
   };
 })();
