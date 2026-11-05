@@ -501,9 +501,16 @@ select.search { appearance: none; cursor: pointer; }
 .tab { cursor: pointer; }
 .zones { list-style: none; }
 .zone { border-top: 1px solid var(--rule); }
-.zone button { appearance: none; background: none; border: none; width: 100%; text-align: left; padding: 0.6rem 0.2rem; cursor: pointer; font-size: 1.08rem; display: flex; justify-content: space-between; align-items: baseline; gap: 0.6rem; color: var(--ink); }
-.zone button small { font: 500 0.62rem var(--f-mono); letter-spacing: 0.06em; color: var(--muted); white-space: nowrap; }
-.zone button:hover { color: var(--pencil-ink); }
-.zone p { display: none; margin: 0 0 0.8rem; padding: 0 0.2rem; color: var(--ink-2); font-size: 0.98rem; }
-.zone.is-open p { display: block; }
-.zone.is-open button { font-weight: 600; }
+.zone .zhead { appearance: none; background: none; border: none; width: 100%; text-align: left; padding: 0.6rem 0.2rem; cursor: pointer; font-size: 1.08rem; display: flex; justify-content: space-between; align-items: baseline; gap: 0.6rem; color: var(--ink); }
+.zone .zhead small { font: 500 0.62rem var(--f-mono); letter-spacing: 0.06em; color: var(--muted); white-space: nowrap; }
+.zone .zhead:hover { color: var(--pencil-ink); }
+.zone.is-open .zhead { font-weight: 600; }
+.clist2 { list-style: none; display: none; margin: 0 0 0.8rem; }
+.zone.is-open .clist2 { display: block; }
+.clist2 button { appearance: none; background: none; border: none; width: 100%; text-align: left; padding: 0.4rem 0.4rem; margin-left: -0.2rem; border-radius: var(--radius); cursor: pointer; display: block; color: var(--ink); }
+.clist2 button:hover { background: var(--paper-2); }
+.clist2 button.is-active { background: var(--ink); color: var(--paper); }
+.clist2 b { display: block; font-weight: 600; font-size: 0.98rem; }
+.clist2 span { display: block; font-size: 0.82rem; line-height: 1.3; opacity: 0.72; }
+.ref-clinica .rbg { fill: #9c2a1c; }
+.ref-clinica .rbg { r: 7; }

@@ -71,7 +71,7 @@
           <ol class="route">
             <li><span class="num">01</span><div><h3><a href="#/provincias">Provincia</a></h3><p>Las 24 provincias en el mapa, con su capital y las ciudades que más se piden. ${top4.map(([id]) => P[id].name).join(', ')} concentran el ${top4pct} % de los casos.</p></div><div class="meta"><span>24</span></div></li>
             <li><span class="num">02</span><div><h3><a href="#/ciudades">Ciudad</a></h3><p>Las ${CITIES.length} ciudades más frecuentes, ordenadas por número de casos, con su provincia y su cantón.</p></div><div class="meta"><span>${CITIES.length}</span></div></li>
-            <li><span class="num">03</span><div><h3><a href="#/sectores">Sector</a></h3><p>Las zonas de Quito, Guayaquil y Cuenca (norte, centro, sur, valles) con sectores de ejemplo en el mapa, para ubicar un «por la Villaflora» o un «cerca de la Kennedy».</p></div><div class="meta"><span>3 ciudades</span></div></li>
+            <li><span class="num">03</span><div><h3><a href="#/sectores">Sector</a></h3><p>Las clínicas dentales de la red en el mapa, separadas por las zonas del listado de proveedores: norte, centro y sur de Quito y Guayaquil, los valles y las demás ciudades.</p></div><div class="meta"><span>${window.EC_CLINICAS.lugares.length} ciudades</span></div></li>
           </ol>
           <p class="foot-note" style="margin-top:var(--s5)">Las ciudades y su orden salen del reporte de asistencias de ${periodo()} (${U.num(GUIA.total)} casos). Es una ayuda de contexto: la dirección exacta se confirma siempre con el mapa de despacho o la ubicación que comparte el cliente.</p>
         </div>
@@ -211,7 +211,7 @@
           <div><dt>Altitud</dt><dd>${alt != null ? '≈ ' + U.num(alt) + ' <small>m</small>' : '—'}</dd></div>
           <div><dt>Casos reportados</dt><dd>${U.num(c.n)}<br><small>${pct(c.n)} % del total</small></dd></div>
         </dl>
-        ${EC.ZONAS[c.id] ? `<a class="btn arrow" href="#/sectores/${c.id}" style="margin-top:1.2rem">Ver sus zonas</a>` : ''}
+        ${window.EC_CLINICAS.lugares.some((l) => l.id === c.id) ? `<a class="btn arrow" href="#/sectores/${c.id}" style="margin-top:1.2rem">Ver sus clínicas por zona</a>` : ''}
         ${same.length ? `<h3>Otras ciudades de ${p.name}</h3><div class="neigh">${same.map((x) => `<button class="chip" type="button" data-c="${x.id}">${esc(x.name)}</button>`).join('')}</div>` : ''}
         <p class="note-warn">El punto es la cabecera cantonal. Úselo para orientarse y confirme la dirección con el mapa de despacho.</p>`;
       detail.querySelectorAll('[data-c]').forEach((b) => (b.onclick = () => pick(b.dataset.c)));
@@ -232,54 +232,78 @@
     return { destroy: () => map.destroy() };
   };
 
-  /* ═════════════ 3 · Sector (zonas de la ciudad) ═════════════ */
+  /* ═════════════ 3 · Sector (clínicas por zona) ═════════════ */
   V.sectores = function (root, app, param) {
-    const IDS = Object.keys(EC.ZONAS).map((id) => cityById(id)).filter(Boolean);
+    const CL = window.EC_CLINICAS;
+    const places = CL.lugares;
+    const byProv = {};
+    places.forEach((l) => (byProv[l.prov] = byProv[l.prov] || []).push(l));
+    const provOrder = Object.keys(byProv).sort((a, b) => (P[a] ? P[a].name : a).localeCompare(P[b] ? P[b].name : b, 'es'));
+    const count = (l) => l.zonas.reduce((a, z) => a + z.clinicas.length, 0);
     root.innerHTML = `
-      <h1 class="sr-only page-title" tabindex="-1">Zonas y sectores de la ciudad</h1>
+      <h1 class="sr-only page-title" tabindex="-1">Clínicas dentales por zona</h1>
       <div class="atlas sectors" id="sectors">
-        <aside class="atlas-side" aria-label="Zonas">
-          <div class="side-block"><p class="step-tag">3 · Sector</p><div class="filters" id="tabs" role="group" aria-label="Ciudad">${IDS.map((c) => `<button type="button" class="chip tab" data-city="${c.id}">${esc(c.name)}</button>`).join('')}</div></div>
-          <div class="side-block" style="border-bottom:none"><p id="resumen" class="resumen"></p><h2>Zonas</h2><ul class="zones" id="zones"></ul><p class="foot-note" id="snote"></p></div>
+        <aside class="atlas-side" aria-label="Zonas y clínicas">
+          <div class="side-block"><p class="step-tag">3 · Sector</p><label class="lbl" for="city">Ciudad</label>
+            <select class="search" id="city">${provOrder.map((pv) => `<optgroup label="${esc(P[pv] ? P[pv].name : pv)}">${byProv[pv].map((l) => `<option value="${l.id}">${esc(l.name)} · ${count(l)}</option>`).join('')}</optgroup>`).join('')}</select>
+            <p class="foot-note" style="margin-top:.7rem">Clínicas dentales de la red, separadas en las zonas del listado de proveedores.</p></div>
+          <div class="side-block" style="border-bottom:none"><ul class="zones" id="zones"></ul><p class="foot-note" id="snote"></p></div>
         </aside>
         <div class="atlas-stage"><div class="stage-map"><div id="map" style="height:100%"></div></div></div>
       </div>`;
-    const tabs = root.querySelector('#tabs'), zones = root.querySelector('#zones'), resumen = root.querySelector('#resumen'), snote = root.querySelector('#snote');
-    const map = new EC.AtlasMap(root.querySelector('#map'), { label: 'Mapa de las zonas de la ciudad' });
+    const sel = root.querySelector('#city'), zones = root.querySelector('#zones'), snote = root.querySelector('#snote');
+    const map = new EC.AtlasMap(root.querySelector('#map'), { label: 'Mapa de clínicas dentales' });
     const SCENE = { tint: 0.4, labels: false, places: false, equator: false, cantones: false, regions: true };
     map.setScene({ ...SCENE, focus: 'all' }, { animate: false });
-    let city = null, active = null;
-    const sectorsOf = (z) => z.sectores.map((n) => city.sectores.find((s) => norm(s.name) === norm(n))).filter(Boolean);
-    function showZone(i) {
-      active = i;
-      const list = city.zonas[i] ? sectorsOf(city.zonas[i]) : [];
-      zones.querySelectorAll('.zone').forEach((li, k) => { const on = k === i; li.classList.toggle('is-open', on); li.querySelector('button').setAttribute('aria-expanded', on); });
-      map.setMarkers(list.map((s) => ({ id: s.name, x: s.x, y: s.y, type: 'sector', glyph: '', typeName: 'Sector', label: s.name, note: '' })));
-      if (list.length) {
-        const xs = list.map((s) => s.x), ys = list.map((s) => s.y);
-        const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-        const w = Math.max((x1 - x0) * 1.8, 70), h = Math.max((y1 - y0) * 1.8, 70);
-        map.flyTo(map.fit({ x: (x0 + x1) / 2 - w / 2, y: (y0 + y1) / 2 - h / 2, w, h }, 0), 700);
-      } else map.flyTo(map.fit({ x: city.x - 25, y: city.y - 25, w: 50, h: 50 }, 0), 700);
+    let place = null;
+    const clinicBtns = {};
+    const boxOf = (list) => {
+      const xs = list.map((s) => s.x), ys = list.map((s) => s.y);
+      const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+      const w = Math.max((x1 - x0) * 1.5, 40), h = Math.max((y1 - y0) * 1.5, 40);
+      return { x: (x0 + x1) / 2 - w / 2, y: (y0 + y1) / 2 - h / 2, w, h };
+    };
+    function openZone(i, fly = true) {
+      zones.querySelectorAll('.zone').forEach((li, k) => { const on = k === i; li.classList.toggle('is-open', on); li.querySelector('.zhead').setAttribute('aria-expanded', on); });
+      map.markActive(null);
+      if (fly) map.flyTo(map.fit(boxOf(place.zonas[i].clinicas), 0), 700);
+    }
+    function focusClinic(id) {
+      const zi = place.zonas.findIndex((z) => z.clinicas.some((c) => c.id === id));
+      if (zi < 0) return;
+      openZone(zi, false);
+      const c = place.zonas[zi].clinicas.find((x) => x.id === id);
+      map.markActive(id);
+      map.flyTo(map.fit({ x: c.x - 9, y: c.y - 9, w: 18, h: 18 }, 0), 700);
+      Object.entries(clinicBtns).forEach(([k, b]) => b.classList.toggle('is-active', k === id));
+      if (clinicBtns[id]) clinicBtns[id].scrollIntoView({ block: 'nearest' });
     }
     function pick(id, animate = true) {
-      city = IDS.find((c) => c.id === id) || IDS[0];
-      city = { ...city, zonas: EC.ZONAS[city.id].zonas };
-      tabs.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-pressed', b.dataset.city === city.id));
-      resumen.textContent = EC.ZONAS[city.id].resumen;
-      zones.innerHTML = '';
-      city.zonas.forEach((z, i) => {
-        const b = el('button', { type: 'button', 'aria-expanded': 'false' }, [z.name, el('small', null, z.sectores.length ? z.sectores.length + ' en el mapa' : '')]);
-        b.addEventListener('click', () => showZone(i));
-        zones.append(el('li', { class: 'zone' }, [b, el('p', null, z.desc)]));
+      place = places.find((l) => l.id === id) || places[0];
+      sel.value = place.id;
+      zones.innerHTML = ''; Object.keys(clinicBtns).forEach((k) => delete clinicBtns[k]);
+      place.zonas.forEach((z, i) => {
+        const head = el('button', { type: 'button', class: 'zhead', 'aria-expanded': 'false' }, [z.name, el('small', null, z.clinicas.length + (z.clinicas.length === 1 ? ' clínica' : ' clínicas'))]);
+        head.addEventListener('click', () => openZone(i));
+        const ul = el('ul', { class: 'clist2' });
+        z.clinicas.forEach((c) => {
+          const b = el('button', { type: 'button' }, [el('b', null, c.name), el('span', null, c.dir || '')]);
+          b.addEventListener('click', () => focusClinic(c.id));
+          clinicBtns[c.id] = b; ul.append(el('li', null, b));
+        });
+        zones.append(el('li', { class: 'zone' }, [head, ul]));
       });
-      snote.textContent = `${city.name}, ${P[city.prov].name}. Los puntos son posiciones aproximadas (GeoNames y OpenStreetMap) para orientarse; no sirven para despachar.`;
-      map.setMarkers([]);
-      map.setScene({ ...SCENE, focus: { box: city.view } }, { animate });
-      history.replaceState(null, '', '#/sectores/' + city.id);
-      showZone(0);
+      const all = place.zonas.flatMap((z) => z.clinicas);
+      map.setMarkers(all.map((c) => ({ id: c.id, x: c.x, y: c.y, type: 'clinica', glyph: '+', typeName: 'Clínica', label: c.name, note: c.dir })));
+      const prov = P[place.prov] ? P[place.prov].name : '';
+      snote.textContent = `${place.name}${prov ? ', ' + prov : ''}. Ubicación aproximada: el punto indica el sector, no la puerta de la clínica. Confirme siempre con la dirección y el mapa de despacho.`;
+      map.setScene({ ...SCENE, focus: 'all' }, { animate: false });
+      map.flyTo(map.fit(boxOf(place.zonas[0].clinicas), 0), animate ? 700 : 1);
+      openZone(0, false);
+      history.replaceState(null, '', '#/sectores/' + place.id);
     }
-    tabs.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => pick(b.dataset.city)));
+    sel.addEventListener('change', () => pick(sel.value));
+    map.on('marker', (id) => focusClinic(id));
     pick(param, false);
     return { destroy: () => map.destroy() };
   };

@@ -32,9 +32,13 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   console.log('ciudades:', nCities);
 
   await go('#/sectores/quito');
-  ok((await p.$$('.zone')).length === 5, 'Quito debe tener 5 zonas');
-  await p.click('.zone:nth-child(3) button'); await sleep(900);
-  ok((await p.$$('.ref')).length >= 4, 'la zona Sur debe mostrar sectores en el mapa');
+  ok((await p.$$('.zone')).length === 8, 'Quito debe tener 8 zonas');
+  ok((await p.$$('.ref')).length === 33, 'Quito debe mostrar sus 33 clínicas');
+  await p.click('.zone:nth-child(3) .zhead'); await sleep(900);
+  ok((await p.$$('.ref')).length === 33, 'el mapa conserva todas las clínicas de la ciudad');
+  await p.click('.zone.is-open .clist2 button'); await sleep(900);
+  ok(!!(await p.$('.ref.is-active')), 'debe resaltar la clínica');
+  await go('#/sectores/guayaquil'); ok((await p.$$('.zone')).length === 5, 'Guayaquil debe tener 5 zonas');
   await go('#/sectores/cuenca'); ok((await p.$$('.zone')).length === 5, 'Cuenca debe tener 5 zonas');
 
   await go('#/atlas');

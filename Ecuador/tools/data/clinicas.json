@@ -1,0 +1,632 @@
+[
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "TITANIUM",
+  "dir": "Whimper y 6 de Diciembre, Edificio Belona Planta Baja (frente a la iglesia de la Paz)"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "PREVEDENT NORTE",
+  "dir": "Av. Luis Tufiño OE 2-134 y Melchor Toaza"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "REHABILITAME",
+  "dir": "Tomas de Berlanga E10-39 y Avenida París Sector Jipijapa"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "ZAVDENT NORTE",
+  "dir": "San Carlos Pedro de Alvarado N56-156 y Av Carlos V diagonal a la escuela El comercio"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "AKRODENT",
+  "dir": "Av francisco de orellana E11-75 y Coruña Edificio Albra consultorio 207"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "DRA. CARMEN FLORES",
+  "dir": "Av. Diego de Almagro 2033 y Whimper. Edificio Torres Whimper, piso 7, oficina 703."
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "GLOBAL SMILE ALEMANIA",
+  "dir": "Alemania N29-77 y Eloy Alfaro junto a farmacia"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "LEXXA DENTAL",
+  "dir": "Calle Vozandes n39-214 y Av. América Edificio Aguilar piso 2 - 201A"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "DENTAL BE",
+  "dir": "Av. 10 de agosto Número: N29-140 y Cuero y Caicedo"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "GLOBAL SMILE REAL AUDIENCIA",
+  "dir": "Sector Rumiñahui, Real Audiencia N6350 y Sabanilla junto a ecuamerican"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "SANEST DENTAL",
+  "dir": "Calderón Sector San Juan Calle Carlos Mantilla y Simón Bolivar"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "OPTIDENT",
+  "dir": "Av Eloy Alfaro OE5 y de los Nolages PB Prados de San Mateo local 112"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "PRO BOCA RIO COCA",
+  "dir": "Av Rio Coca e Isla Genovesa E6-30 local 5 PB en la esquina de farmacys"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "NORTE",
+  "name": "YESSALUD",
+  "dir": "RUMIPAMBA OE1-116 Y SAN PEDRO EDIFICIO CELICA PLANTA BAJA"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "SUR",
+  "name": "PRO-BOCA VILLAFLORA",
+  "dir": "Sector La Villaflora: Calle Casitagua Y Corazón dentro del Santa Maria Local 8"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "SUR",
+  "name": "PREVEDENT SUR",
+  "dir": "Sector La Villaflora: Juan de Arguello OE2-18 y Pedro de Alfaro diagonal a UPC villaflora"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "SUR",
+  "name": "MULTIDENT",
+  "dir": "AV CARDENAL DE LA TORRE S13-235 Y VICENTE REYES DIAGONAL A LA PARADA DE EL CALZADO"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "SUR",
+  "name": "PRO-BOCA SOLANDA",
+  "dir": "Jose Maria Aleman S23-109 Y Calixto Del Pino"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "SUR",
+  "name": "PREVEDENT BY AXXIS,",
+  "dir": "Av Maldonado Centro Comercial el Recreo Torre Medisur 4to piso consultorio 6"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "SUR",
+  "name": "KRONOS DENTAL",
+  "dir": "AV TENIENTE HUGO ORTIZ S13-361 Y RODRIGO DE SALAZAR (FRENTE A LA PARADA DEL TROLE BUS QUITO SUR)"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "CENTRO",
+  "name": "ZAVDENT CENTRO",
+  "dir": "Garcia Moreno N1-42 y Bolívar frente al Santa María"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "VALLES DE  TUMBACO, CUMBAYA Y PUEMBO",
+  "name": "NOVADENTAL TUMBACO",
+  "dir": "Av. Oswaldo Guayasamin OE6-65 y Gonzalez Suarez. Frente a la Gasolinera Puma"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "VALLES DE  TUMBACO, CUMBAYA Y PUEMBO",
+  "name": "EVA DENTAL SERVICES",
+  "dir": "Hospital de los valles, edificio de especialidades médicas, tercer piso, consultorio 328"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "VALLES DE  TUMBACO, CUMBAYA Y PUEMBO",
+  "name": "NOVADENTAL PUEMBO",
+  "dir": "CALLE 24 DE MAYO Y MANUEL BURBANO PLAZA SANTORINI"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "VALLES DE LOS CHILLOS/ SAN RAFAEL",
+  "name": "ODONTOPANORAMIC",
+  "dir": "Av. General Enriquez e isla San Cristobal (sector el triángulo)"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "VALLES DE LOS CHILLOS/ SAN RAFAEL",
+  "name": "CENTRODENT RX",
+  "dir": "Av. Gral Rumiñahui 152 e Isla Genovesa - Frente a Pizza Hut, San Rafael"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "VALLES DE LOS CHILLOS/ SAN RAFAEL",
+  "name": "PRO BOCA SAN RAFAEL",
+  "dir": "Av. Geovani Farina e Isla Genovesa diagonal a Top Ten"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "VALLES DE LOS CHILLOS/ SAN RAFAEL",
+  "name": "ZAVDENT VALLE",
+  "dir": "Capelo Avelina Lasso y Mariana de Jesús a media cuadra del UPC"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "VALLES DE LOS CHILLOS/ SAN RAFAEL",
+  "name": "PRO BOCA CONOCOTO",
+  "dir": "Av. Ponce Enriquez Oe2-155 y Jaime Roldos, a 200m del redondel de Conocoto subiendo por la Ponce Enriquez 2do piso"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "MACHACHI",
+  "name": "KRONOS",
+  "dir": "AV PABLO GUARDERAS N6-130 Y VELASCO IBARRA (ESQUINA )DIAGONAL A SUPER POLLOS"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "CAYAMBE",
+  "name": "DENTAL AREA",
+  "dir": "CAYAMBE CALLE ASCAZUBI Y JUNIN"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "CAYAMBE",
+  "name": "IDENTAL CAYAMBE",
+  "dir": "CAYAMBE: ASCAZUBI S0-56 Y SUCRE"
+ },
+ {
+  "prov": "PICHINCHA",
+  "city": "QUITO",
+  "zone": "GUAYLLABAMBA",
+  "name": "TUTTI DENT",
+  "dir": "AV SIMON BOLIVAR S2-320 Y SECUNDARIA A MEDIA CUADRA DEL COMERCIAL GUAYLLABAMBA"
+ },
+ {
+  "prov": "GUAYAS",
+  "city": "GUAYAQUIL",
+  "zone": "NORTE",
+  "name": "(METROSONRISAS)",
+  "dir": "KENNEDY NORTE AV. FRANCISCO DE ORELLANA Y NAHIM ISAIAS CENTRO MEDICO METRORED 1ER PISO CONSULTORIO 12 , DIAGONAL AL HILTON COLON JUNTO A COLINEAL"
+ },
+ {
+  "prov": "GUAYAS",
+  "city": "GUAYAQUIL",
+  "zone": "NORTE",
+  "name": "G&O DENTAL",
+  "dir": "Samanes 1 Calle Dr Francisco Rizzo Villa 3 local 2 PB junto a Plaza Samanes"
+ },
+ {
+  "prov": "GUAYAS",
+  "city": "GUAYAQUIL",
+  "zone": "NORTE",
+  "name": "ST DENTAL",
+  "dir": "CDLA SAMANES 4, CALLE ISIDRO AYORA Y 5TO CALLEJON MZ 402 SOLAR 8 ANTES DE LA PARRILLADA DEL URU"
+ },
+ {
+  "prov": "GUAYAS",
+  "city": "GUAYAQUIL",
+  "zone": "NORTE",
+  "name": "DENTAL OK NORTE",
+  "dir": "GARZOTA AV GUILLERMO PAREJA ROLANDO Y CALLE RENÉ IDROBO ROSALES MZ 16 EDIFICIO 11 2DO PISO, OFICINA 01"
+ },
+ {
+  "prov": "GUAYAS",
+  "city": "GUAYAQUIL",
+  "zone": "NORTE",
+  "name": "ODONTOSMILE´S",
+  "dir": "ÁLAMOS CENTER. CDLA. ÀLAMOS III, Av. DESTACAMENTO BASE SUR"
+ },
+ {
+  "prov": "GUAYAS",
+  "city": "GUAYAQUIL",
+  "zone": "SUR",
+  "name": "ESTETICA DENTAL CENTENARIO",
+  "dir": "Rosendo Aviles Y Mexico"
+ },
+ {
+  "prov": "GUAYAS",
+  "city": "GUAYAQUIL",
+  "zone": "SUR",
+  "name": "ESTETICA DENTAL SUR",
+  "dir": "10ma Y Cuenca Esquina"
+ },
+ {
+  "prov": "GUAYAS",
+  "city": "GUAYAQUIL",
+  "zone": "CENTRO",
+  "name": "METROPOLITAN DENTAL",
+  "dir": "Los Rios 101 y Piedrahíta Esquina"
+ },
+ {
+  "prov": "GUAYAS",
+  "city": "DURÁN",
+  "zone": "DURÁN",
+  "name": "DENTAL OK DURÁN",
+  "dir": "PRIMAVERA 1 AV SAMUEL CISNEROS Y NICOLAS LAPENTTI ALADO DE ALMACENES TIA"
+ },
+ {
+  "prov": "GUAYAS",
+  "city": "MILAGRO",
+  "zone": "MILAGRO",
+  "name": "DENTALMEIDA",
+  "dir": "AV 17 DE SEPTIEMBRE Y PORTOVIEJO"
+ },
+ {
+  "prov": "SUCUMBIOS",
+  "city": "LAGO AGRIO",
+  "zone": null,
+  "name": "HADA DE LOS DIENTES",
+  "dir": "Av. Quito y 12 de febrero. Centro comercial paseo de Lago edificio médico. 2do piso. Consultorio 3"
+ },
+ {
+  "prov": "TUNGURAHUA",
+  "city": "AMBATO",
+  "zone": null,
+  "name": "CENTRO DE ESPECIALIDADES ODONTOLOGICAS ODONTOLED",
+  "dir": "Av Cevallos 09-38 Y Maldonado altos fundacion Vista para todos"
+ },
+ {
+  "prov": "TUNGURAHUA",
+  "city": "AMBATO",
+  "zone": null,
+  "name": "CENTRO DE ESPECIALIDADES ODONTOLOGICAS ODONTOLED SUCURSAL NUEVA",
+  "dir": "Pasaje Antonio Pons y Victor Hugo"
+ },
+ {
+  "prov": "TUNGURAHUA",
+  "city": "AMBATO",
+  "zone": null,
+  "name": "ARTDENTAL",
+  "dir": "Av Cevallos y Juan León Mera Edificio Mutualista Ambato 5 to piso"
+ },
+ {
+  "prov": "TUNGURAHUA",
+  "city": "PATATE",
+  "zone": null,
+  "name": "IGLESIASDENTIS",
+  "dir": "Av Ambato frente al estadio municipal San Cristobal de Patate"
+ },
+ {
+  "prov": "TUNGURAHUA",
+  "city": "PELILEO",
+  "zone": null,
+  "name": "SAUDE DENTAL GROUP",
+  "dir": "Antonio Clavijo 04-283 entre Jose Mejía y Vicente Rocafuerte"
+ },
+ {
+  "prov": "DOMINGO DE LOS TSACHILAS",
+  "city": "SANTO DOMINGO",
+  "zone": null,
+  "name": "DENTCENTER",
+  "dir": "Urb. Granda Centeno Pasaje Alejandro Calazacon S/N e Ibarra referencia frente a la unidad médica Genesis oficina 2"
+ },
+ {
+  "prov": "IMBABURA",
+  "city": "IBARRA",
+  "zone": null,
+  "name": "CENTRO MEDICO DE ESPECIALIDADES CASA BLANCA",
+  "dir": "Av Jose Maria Lequerica N11-32 y Cristobal de Troya"
+ },
+ {
+  "prov": "IMBABURA",
+  "city": "IBARRA",
+  "zone": null,
+  "name": "IDENTOL IBARRA",
+  "dir": "BOLIVAR 9-61 Y COLON SECTOR CENTRO"
+ },
+ {
+  "prov": "IMBABURA",
+  "city": "OTAVALO",
+  "zone": null,
+  "name": "IDENTOL OTAVALO",
+  "dir": "BOLIVAR ENTRE COLON Y CALDERON SECTOR CENTRO"
+ },
+ {
+  "prov": "AZUAY",
+  "city": "CUENCA",
+  "zone": null,
+  "name": "INMOLA",
+  "dir": "Sector del coliseo Gilberto Gatto y Av 12 de Abril Local A3"
+ },
+ {
+  "prov": "AZUAY",
+  "city": "CUENCA",
+  "zone": null,
+  "name": "ODONTOART PRINCIPAL",
+  "dir": "AV GONZALEZ SUAREZ 16-72 Y CORDILLERA A 50 METROS DEL GRAN AKI"
+ },
+ {
+  "prov": "AZUAY",
+  "city": "CUENCA",
+  "zone": null,
+  "name": "ODONTOART HERRERIAS",
+  "dir": "DE LAS HERRERIAS 2-24 Y DE LAS ACACIAS DIAGONAL AL UPC"
+ },
+ {
+  "prov": "AZUAY",
+  "city": "CUENCA",
+  "zone": null,
+  "name": "AS DENTAL",
+  "dir": "Sector Totoracocha Av. Yanahurco 5-24 y 13 de abril, en la planta alta del Centro Médico PREMIUM"
+ },
+ {
+  "prov": "AZUAY",
+  "city": "CUENCA",
+  "zone": null,
+  "name": "DR SANTIAGO BARZALLO (BCO DEL AUSTRO)",
+  "dir": "Av Loja y Primero de Mayo Edificio El Arco"
+ },
+ {
+  "prov": "AZUAY",
+  "city": "CUENCA",
+  "zone": null,
+  "name": "ODONTOPRO",
+  "dir": "GIRASOL 1-84 Y PAUCARBAMBA A DOS CUADRAS CLINICA SANTA ANA"
+ },
+ {
+  "prov": "AZUAY",
+  "city": "CUENCA",
+  "zone": null,
+  "name": "CENTRO NORTE SANTODONTO CUENCA",
+  "dir": "Av de las Americas entre Miguel Velez y Miguel Heredia Edificio Montebello (frente a los bomberos)"
+ },
+ {
+  "prov": "AZUAY",
+  "city": "CUENCA",
+  "zone": null,
+  "name": "ODONTOCLINIC",
+  "dir": "Vega Toral y Alberto Palacios esquina, una cuadra más abajo del de la torre 2 del Monte Sinaí frente al parque"
+ },
+ {
+  "prov": "AZUAY",
+  "city": "CUENCA",
+  "zone": null,
+  "name": "BS IMPLANTS",
+  "dir": "Av DIEZ DE AGOSTO Y DAVID DIAZ ESQUINA"
+ },
+ {
+  "prov": "AZUAY",
+  "city": "SIGSIG",
+  "zone": null,
+  "name": "ODONTOSALUD",
+  "dir": "Salazar y Corral frente a la plaza 24 de mayo"
+ },
+ {
+  "prov": "CAÑAR",
+  "city": "EL TAMBO",
+  "zone": null,
+  "name": "SANODONTO EL TAMBO",
+  "dir": "Dir. Panamericana central y Montenegro en los altos de la Farmacia Suiza"
+ },
+ {
+  "prov": "CAÑAR",
+  "city": "AZOGUES",
+  "zone": null,
+  "name": "ODONTOESTÉTICA AZOGUES",
+  "dir": "Calle Cacique Tenemaza y Julio Maria Matovelle"
+ },
+ {
+  "prov": "CAÑAR",
+  "city": "BIBLIÁN",
+  "zone": null,
+  "name": "ODONTOESTÉTICA BIBLIÁN",
+  "dir": "Calle Alberto Ochoa Num 311 y Tomas Sacoto"
+ },
+ {
+  "prov": "EL ORO",
+  "city": "MACHALA",
+  "zone": null,
+  "name": "ORODENT",
+  "dir": "10 DE AGOSTO Y 25 DE JUNIO PB FRENTE A CASA PAN"
+ },
+ {
+  "prov": "LOJA",
+  "city": "LOJA",
+  "zone": null,
+  "name": "CLINICA ODONTOLOGICA SMAID - DENTALCORP",
+  "dir": "18 De Noviembre 1041 Entre Azuay Y Miguel Riofrio"
+ },
+ {
+  "prov": "LOJA",
+  "city": "LOJA",
+  "zone": null,
+  "name": "DENTAL CARE CENTER",
+  "dir": "Bernardo Valdivieso 158 - 86 Azuay diagonal a la plaza de las flores"
+ },
+ {
+  "prov": "LOJA",
+  "city": "CATAMAYO",
+  "zone": null,
+  "name": "NEW SMILE ODONTOLOGÍA INTEGRAL",
+  "dir": "Av. Catamayo e Isidro Ayora dentro del Sindicato de Chóferes"
+ },
+ {
+  "prov": "COTOPAXI",
+  "city": "LATACUNGA",
+  "zone": null,
+  "name": "ENFOQUE DENTAL",
+  "dir": "SANCHEZ DE ORELLANA ENTRE RUMIÑAHUI Y MARQUEZ DE MAENZA EDIFICIO MEDICAL CONSULTORIO 3"
+ },
+ {
+  "prov": "COTOPAXI",
+  "city": "LATACUNGA",
+  "zone": null,
+  "name": "TOPDENTIS",
+  "dir": "AV UNIDAD NACIONAL Y CIPRES"
+ },
+ {
+  "prov": "COTOPAXI",
+  "city": "LATACUNGA",
+  "zone": null,
+  "name": "AGE OF SMILE",
+  "dir": "SANCHEZ DE ORELLANA Y HERMANAS PAEZ"
+ },
+ {
+  "prov": "ESMERALDA",
+  "city": "ESMERALDA",
+  "zone": null,
+  "name": "MILY DENTAL - DRA REYNA",
+  "dir": "ELOY ALFARO ENTRE QUITO Y RICAURTE RB MEDIKA CENTRO DE ESPECIALIDADES 2DO PISO"
+ },
+ {
+  "prov": "MANABÍ",
+  "city": "MANTA",
+  "zone": null,
+  "name": "DENTAL FAMILY",
+  "dir": "BARRIO LA DOLOROSA CALLE 7 ENTRE AV 22 Y 23"
+ },
+ {
+  "prov": "MANABÍ",
+  "city": "MANTA",
+  "zone": null,
+  "name": "SALUD DENTAL INTEGRAL",
+  "dir": "BARRIO JOCAY AV J12 ENTRE J2 Y J5"
+ },
+ {
+  "prov": "MANABÍ",
+  "city": "MANTA",
+  "zone": null,
+  "name": "MAXILOFACIAL DENTAL CENTER",
+  "dir": "CALLE 16 Y AV 40 EDIFICIO MANTA HOSPITAL CENTER BLOQUE 2 OFICINA 230"
+ },
+ {
+  "prov": "MANABÍ",
+  "city": "PORTOVIEJO",
+  "zone": null,
+  "name": "DR. JOSE BARCIA MIRANDA",
+  "dir": "Av. Reales Tamarindo S/N Y Tennis Club // Frente Al Hostal Reales Tamarindo"
+ },
+ {
+  "prov": "LOS RIOS",
+  "city": "QUEVEDO",
+  "zone": null,
+  "name": "SONRISAS M & J",
+  "dir": "CALLE TERCERA ENTRE BOLIVAR Y MALECON EDIFICIO LOOR JACHO PRIMER PISO"
+ },
+ {
+  "prov": "CHIMBORAZO",
+  "city": "RIOBAMBA",
+  "zone": null,
+  "name": "DENTALFRESH",
+  "dir": "AV VILLARROEL Y ALVARADO A UNA CUADRA DEL RESTAURANTE BONY UNO"
+ },
+ {
+  "prov": "CHIMBORAZO",
+  "city": "RIOBAMBA",
+  "zone": null,
+  "name": "SANODONTO RIOBAMBA",
+  "dir": "CALLE JUAN DE VELASCO ENTRE VILLARROE3L Y CHILE A LA VUELTA DE ESCUELA VIGOSKY"
+ },
+ {
+  "prov": "NAPO",
+  "city": "TENA",
+  "zone": null,
+  "name": "GO DENTAL",
+  "dir": "AV. 15 DE NOVIEMBRE Y MANUEL MARIA ROSALES, FRENTE A ALA COCACOLA"
+ },
+ {
+  "prov": "SANTA ELENA",
+  "city": "SANTA ELENA",
+  "zone": null,
+  "name": "GOLDEN DENTAL",
+  "dir": "9 DE OCTUBRE ENTRE OLMEDO Y CHIMBORAZO JUNTO AL CAJERO DE BANCO PICHINCHA"
+ },
+ {
+  "prov": "PASTAZA",
+  "city": "PUYO",
+  "zone": null,
+  "name": "DR JOSE GARCIA",
+  "dir": "ATAHUALPA Y 27 DE FEBRERO EDIFICIO TAPIA SOBRE LA JOYERIA THAIS"
+ },
+ {
+  "prov": "LOS RIOS",
+  "city": "BABAHOYO",
+  "zone": null,
+  "name": "WHITEDENTAL",
+  "dir": "Calle 27 mayo entre garcia moreno y juan x marcos referencia al frente a Sebastian Market y alado de la sastrería la americana"
+ },
+ {
+  "prov": "MANABI",
+  "city": "CHONE",
+  "zone": null,
+  "name": "DENTAL VERA",
+  "dir": "CALLE 7 DE AGOSTO CENTRO MEDICO PLANIFAM A LOS LADOS DE LA FARMACIA 7 DE AGOSTO"
+ },
+ {
+  "prov": "ORELLANA",
+  "city": "EL COCA",
+  "zone": null,
+  "name": "PRODENTAL",
+  "dir": "9 DE OCTUBRE ENTRE PUTUMAYO Y AGUARICO AL FRENTE DE FERRETERIA SALINAS"
+ },
+ {
+  "prov": "ORELLANA",
+  "city": "EL COCA",
+  "zone": null,
+  "name": "PRODENTAL",
+  "dir": "EL COCA 9 DE OCTUBRE 50-06 Y GUAYAQUIL A 20 METROS DE ELECTRONIETO"
+ },
+ {
+  "prov": "ZAMORA",
+  "city": "ZAMORA",
+  "zone": null,
+  "name": "MEDIC DENTAL",
+  "dir": "Barrio Pio Jaramillo Av del Ejercito y Juan Izquierdo"
+ },
+ {
+  "prov": "CARCHI",
+  "city": "TULCÁN",
+  "zone": null,
+  "name": "MAGIC DENT´S",
+  "dir": "10 DE AGOSTO ENTRE BOLIVAR Y RAFAEL ARELLANO A MEDIA CUADRA DEL TEATRO LEMARIE"
+ }
+]
